@@ -8,6 +8,7 @@ use App\Models\Banners;
 use App\Models\BukuTamu;
 use App\Models\DataAlatPeraga;
 use App\Models\Faq;
+use App\Models\GroupPegawai;
 use App\Models\JadwalPraktek;
 use App\Models\KebijakanAplikasi;
 use App\Models\LinkTerkait;
@@ -188,6 +189,20 @@ class FrontendController extends Controller
             ';
         }
         $output .= '';
+        return response()->json($output);
+    }
+    public function getDataPegawai(Request $request)
+    {
+        $getRow = GroupPegawai::whereNik($request->nik)->first();
+        if(!empty($getRow)){
+            $row = [
+                'nama' => $getRow->nama,
+                'telp' => $getRow->telp,
+            ];
+            $output = array('status' => true, 'row' => $row);
+        }else{
+            $output = array('status' => false, 'row' => '');
+        }
         return response()->json($output);
     }
     public function saveJadwalPraktek(Request $request)

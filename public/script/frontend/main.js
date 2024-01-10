@@ -338,6 +338,38 @@ var KTFormPengajuan = function () {
         }
     }
 }();
+// search data pegawai
+$('#search-dtPegawai').click(function(){
+    let nik_instruktur = $('#nik_instruktur');
+    $('#search-dtPegawai').html('<span class="spinner-border spinner-border-sm align-middle"></span>').attr('disabled', true);
+    if (nik_instruktur.val() == '') {
+        toastr.error('NIK masih kosong...', 'Uuppss!', {"progressBar": true, "timeOut": 1500});
+        nik_instruktur.focus();
+        $('#search-dtPegawai').html('<i class="bi bi-search text-white me-1"></i> Cari').attr('disabled', false);
+        return false;
+    }
+    $.ajax({
+        url: BASE_URL+ "/ajax_get_data_pegawai",
+        type: "GET",
+        dataType: "JSON",
+        data: {
+            nik:nik_instruktur.val()
+        },success: function (data) {
+            $('#search-dtPegawai').html('<i class="bi bi-search text-white me-1"></i> Cari').attr('disabled', false);
+            if(data.row != ''){
+                $('#nama_instruktur').val(data.row.nama),
+                $('#no_wa').val(data.row.telp);
+            }else{
+                toastr.error('Data tidak ditemukan, lakukan penginputan data secara manual', 'Uuppss!', {"progressBar": true, "timeOut": 3500});
+                $('#nama_instruktur').val(''),
+                $('#no_wa').val('');
+            }
+        }, error: function (jqXHR, textStatus, errorThrown) {
+            blockUi.release(), blockUi.destroy();
+            console.log('Load data is error');
+        }
+    });
+});
 // Class Initialization
 jQuery(document).ready(function() {
     KTFormPengajuan.init();

@@ -32,8 +32,7 @@
 </div>
 <div class="tns tns-default" style="direction: ltr">
     <!--begin::Slider-->
-    <div data-tns="true" data-tns-loop="true" data-tns-swipe-angle="false"
-    data-tns-speed="1000"
+    <div data-tns="true" data-tns-loop="true" data-tns-swipe-angle="false" data-tns-speed="1000"
     data-tns-autoplay="true"
     data-tns-autoplay-timeout="5000"
     data-tns-controls="true"
@@ -87,6 +86,7 @@
     <!--end::Slider button-->
 </div>
 
+<!--begin::Card laboratorium-->
 <div class="card h-lg-100 mt-5 card-of-lab" id="sectionLaboratorium" style="background: linear-gradient(26.57deg, #47BAB3 8.33%, #A1CF7E 91.67%)">
     <!--begin::Body-->
     <div class="card-body">          
@@ -138,14 +138,15 @@
     </div>
     <!--end::Body-->
 </div>
-
+<!--end::Card laboratorium-->
+<!--begin::Card Detail Laboratorium-->
 <div class="mb-lg-n30 mt-6 position-relative z-index-2" id="sectionDetailLaboratorium" style="display: none;">
     <!--begin::Card-->
     <div class="card" style="filter: drop-shadow(0px 0px 40px rgba(59, 59, 59, 0.08))">
         <!--begin::Card body-->
-        <div class="card-body p-lg-20" id="dt-detailLaboratorium">        
-          
-        </div>
+        <div class="card-body p-lg-20" id="dt-detailLaboratorium"></div>
+        <!--end::Card body-->       
+        <!--begin::Card body-->
         <div class="card-body p-lg-5 col-lg-12 d-flex justify-content-center">
             <button type="button" class="btn btn-sm btn-danger" id="closeDetailLaboratorium"><i class="bi bi-x fs-3"></i> Tutup</button>
         </div>
@@ -153,8 +154,8 @@
     </div>
     <!--end::Card-->
 </div>
-
-<!--begin::Card-->
+<!--end::Card Detail Laboratorium-->
+<!--begin::Card Form Pengajuan Praktek-->
 <div class="card mt-5" id="kt-form-pengajuan">     
     <!--begin::Body-->
     <div class="card-body p-lg-15">
@@ -198,7 +199,12 @@
                                         <!--begin::Input group-->
                                         <div class="row">
                                             <label class="col-form-label required fs-6" for="nik_instruktur">NIK</label>
-                                            <input type="text" name="nik_instruktur" id="nik_instruktur" class="form-control mb-3 mb-lg-0 inputmax20" maxlength="20"  placeholder="Masukkan nik..." autocomplete="off" />
+                                            <div class="input-group">
+                                                <input type="text" name="nik_instruktur" id="nik_instruktur" class="form-control mb-3 mb-lg-0 inputmax20" maxlength="20"  placeholder="Masukkan nik..." autocomplete="off" />
+                                                <span class="input-group-text text-white bg-info cursor-pointer" data-bs-toggle="tooltip" title="Pencarian pada pusat data pegawai!" id="search-dtPegawai">
+                                                    <i class="bi bi-search text-white me-1"></i> Cari
+                                                </span>
+                                            </div>
                                             <div class="form-text">*) Maksimal: <code>20</code> Digit</div>
                                         </div>
                                         <!--end::Input group-->
@@ -295,7 +301,7 @@
     </div>
     <!--end::Body-->
 </div>
-<!--begin::End-->
+<!--end::Card Form Pengajuan Praktek-->
 
 @section('js')
 <script src="{{ asset('/dist/plugins/bootstrap-select/js/bootstrap-select.min.js') }}"></script>

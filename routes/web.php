@@ -24,6 +24,7 @@ Route::controller(FrontendController::class)->group(function(){
     Route::get('/ajax_load_profile', 'loadProfile');
     Route::get('/ajax_load_faq', 'loadFaq');
     Route::post('/ajax_save_jadwal_praktek', 'saveJadwalPraktek');
+    Route::get('/ajax_get_data_pegawai', 'getDataPegawai');
     Route::post('/ajax_save_buku_tamu', 'saveBukuTamu');
 });
 
