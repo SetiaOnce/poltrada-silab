@@ -15,11 +15,7 @@ class DataBukuTamuController extends Controller
 {
     public function index()
     {
-        if(!session()->get('login_akses')) { 
-            return redirect('/login'); 
-        }
-        $data['header_title'] = 'Buku Tamu';
-        
+        $data['header_title'] = 'Buku Tamu';   
         return view('backend.common.data_buku_tamu', $data);
     }
     public function data(Request $request)

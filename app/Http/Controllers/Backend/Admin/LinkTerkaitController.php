@@ -15,9 +15,6 @@ class LinkTerkaitController extends Controller
 {
     public function index()
     {
-        if(!session()->get('login_akses')) { 
-            return redirect('/login'); 
-        }
         $data['header_title'] = 'Link Terkait';
         return view('backend.admin.link_terkait', $data);
     }

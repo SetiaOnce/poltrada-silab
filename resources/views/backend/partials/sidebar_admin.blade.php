@@ -137,6 +137,7 @@
                         href="{{ url('app_admin/peminjaman') }}"><span
                         class="menu-icon"><i class="bi bi-inboxes-fill fs-3"></i></span><span
                         class="menu-title">PEMINJAMAN</span>
+                        <span class="menu-badge"><span class="badge badge-success notif-peminjaman-alat"></span></span>
                     </a>
                     <!--end:Menu link-->
                 </div>

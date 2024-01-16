@@ -15,11 +15,7 @@ class BannersController extends Controller
 {
     public function index()
     {
-        if(!session()->get('login_akses')) { 
-            return redirect('/login'); 
-        }
-        $data['header_title'] = 'Banners';
-        
+        $data['header_title'] = 'Banners';   
         return view('backend.admin.banners', $data);
     }
     public function data(Request $request)

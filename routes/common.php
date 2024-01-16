@@ -1,5 +1,6 @@
 <?php
 
+use App\Helpers\Shortcut;
 use App\Http\Controllers\Backend\Common\CommonController;
 use App\Http\Controllers\Backend\Common\DataBukuTamuController;
 use App\Http\Controllers\Backend\Common\LaporanAlatPeragaController;
@@ -12,9 +13,7 @@ use Illuminate\Support\Facades\Route;
 
 // for redirect page
 Route::get('/dashboard', function () {
-    if(!session()->get('login_akses')) { 
-        return redirect('/login'); 
-    } 
+    Shortcut::checkStatusLogin();
     $data['header_title'] = 'Dashboard';
     return view('backend.common.dashboard', $data);
 });

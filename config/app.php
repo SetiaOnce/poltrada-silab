@@ -17,6 +17,10 @@ return [
 
     'name' => env('APP_NAME', 'Laravel'),
 
+    //Google Captcha
+    'gsite_key' => env('GRECAPTCHA_SITE_KEY', '-'),
+    'gsecret_key' => env('GRECAPTCHA_SECRET_KEY', '-'),
+    'gsite_verify' => env('GRECAPTCHA_SITE_VERIFY', '-'),
     /*
     |--------------------------------------------------------------------------
     | Application Environment

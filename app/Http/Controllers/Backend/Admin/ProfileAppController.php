@@ -13,11 +13,7 @@ class ProfileAppController extends Controller
 {
     public function index()
     {
-        if(!session()->get('login_akses')) { 
-            return redirect('/login'); 
-        }
-        $data['header_title'] = 'Profile App';
-        
+        $data['header_title'] = 'Profile App';   
         return view('backend.admin.profile_app', $data);
     }
 

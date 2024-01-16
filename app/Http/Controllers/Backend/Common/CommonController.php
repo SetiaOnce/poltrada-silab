@@ -187,8 +187,8 @@ class CommonController extends Controller
         $jmlh_alatPeraga = DataAlatPeraga::where('status', 1)->count();
         $jmlh_kunjungan = BukuTamu::all()->count();
         $jmlh_kegiatanPraktek = 0;
-        $jmlh_transaksi = Peminjaman::all()->count();
-        $transaksi_jatuhTempo = Peminjaman::whereDate('tgl_pengembalian', '<=', date('Y-m-d'))->where('status', 0)->count();
+        $jmlh_transaksi = Peminjaman::whereIn('status', [1,2])->count();
+        $transaksi_jatuhTempo = Peminjaman::whereDate('tgl_pengembalian', '<=', date('Y-m-d'))->where('status', 1)->count();
         $response = [
             'level_user' => session()->get('key_level'),
             'url_banner' => asset('dist/img/background-dashboard.jpg'),
@@ -209,7 +209,7 @@ class CommonController extends Controller
     }
     public function tableTransaksiJatuhTempo(Request $request)
     {
-        $data = Peminjaman::whereDate('tgl_pengembalian', '<=', date('Y-m-d'))->where('status', 0)->get();
+        $data = Peminjaman::whereDate('tgl_pengembalian', '<=', date('Y-m-d'))->where('status', 1)->get();
         return Datatables::of($data)->addIndexColumn()
             ->editColumn('jumlah_alat', function ($row) {
                 return DetailPinjaman::whereFidPeminjaman($row->id)->count();
@@ -228,7 +228,7 @@ class CommonController extends Controller
         $dateYear = date('Y');
         $xavisBulan = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
         for ($i=1; $i<=12; $i++) { 
-            $amountData[] = Peminjaman::whereYear('tgl_peminjaman', $dateYear)->whereMonth('tgl_peminjaman', $i)->count();
+            $amountData[] = Peminjaman::whereYear('tgl_peminjaman', $dateYear)->whereMonth('tgl_peminjaman', $i)->whereIn('status', [1,2])->count();
         }
         $response = array(
             'xavisBulan' => $xavisBulan,
@@ -239,8 +239,10 @@ class CommonController extends Controller
     public function loadNotification(Request $request)
     {
         $jadwalPraktek = JadwalPraktek::whereStatus(0)->count();
+        $peminjamanALat = Peminjaman::whereStatus(0)->count();
         $response = array(
             'jadwal_praktek' => $jadwalPraktek,
+            'peminjaman_alat' => $peminjamanALat,
         );
         return response()->json($response);
     }

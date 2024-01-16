@@ -79,18 +79,9 @@ Route::controller(DataAlatPeragaController::class)->group(function(){
 // for handle peminjaman alat
 Route::controller(PeminjamanController::class)->group(function(){
     Route::post('/ajax/load_peminjaman_alat', 'data');
-    Route::get('/ajax/peminjaman_alat_edit', 'edit');
-    Route::post('/ajax/peminjaman_alat_save', 'store');
-    Route::post('/ajax/peminjaman_alat_update', 'update');
-    Route::get('/ajax/check_data_taruna_dosen', 'checkTarunaDosen');
     Route::get('/peminjaman_alat_print_pdf/{id}', 'cetakPdf');
     Route::get('/ajax/load_modal_alat_pinjaman', 'modalAlatPinjaman');
-    
-    // route for peminjaman alat
-    Route::get('/ajax/load_header_pinjaman', 'loadHeaderPinjaman');
-    Route::post('/ajax/load_alat_pinjaman', 'alatPinjaman');
-    Route::post('/ajax/check_alat_approve', 'checkApproveAlat');
-    Route::post('/ajax/alat_pinjaman_save', 'alatPinjamanSave');
+    Route::post('/ajax/peminjaman_alat_send_action', 'actionApprove');
     
     // route for pengembalian alat
     Route::get('/ajax/load_pengembalian_alat_detail', 'loadPengembalianBukuDetail');
@@ -111,21 +102,6 @@ Route::controller(PemeriksaanController::class)->group(function(){
     Route::post('/ajax/pemeriksaan_save', 'store');
     Route::post('/ajax/pemeriksaan_update', 'update');
     Route::post('/ajax/pemeriksaan_destroy', 'destroy');
-});
-// for handle peminjaman alat peraga
-Route::controller(PeminjamanController::class)->group(function(){
-    Route::post('/ajax/load_peminjaman', 'data');
-    Route::get('/ajax/peminjaman_edit', 'edit');
-    Route::post('/ajax/peminjaman_save', 'store');
-    Route::post('/ajax/peminjaman_update', 'update');
-    Route::post('/ajax/peminjaman_destroy', 'destroy');
-    Route::get('/ajax/load_modal_buku_pinjaman', 'modalBukuPinjaman');
-
-    Route::get('/ajax/load_header_pinjaman', 'loadHeaderPinjaman');
-    Route::post('/ajax/load_buku_pinjaman', 'bukuPinjaman');
-    Route::post('/ajax/buku_pinjaman_save', 'bukuPinjamanSave');
-    Route::get('/ajax/load_pengembalian_buku_detail', 'loadPengembalianBukuDetail');
-    Route::post('/ajax/confirm_pengembalian_buku', 'confirmPengembalian');
 });
 // for handle pengajuan jadwal praktek
 Route::controller(JadwalPraktekController::class)->group(function(){

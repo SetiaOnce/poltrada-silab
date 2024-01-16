@@ -4,9 +4,11 @@ namespace App\Http\Controllers\Frontend;
 
 use App\Helpers\Shortcut;
 use App\Http\Controllers\Controller;
+use App\Models\AkademikMahasiswa;
 use App\Models\Banners;
 use App\Models\BukuTamu;
 use App\Models\DataAlatPeraga;
+use App\Models\DetailPinjaman;
 use App\Models\Faq;
 use App\Models\GroupPegawai;
 use App\Models\JadwalPraktek;
@@ -14,6 +16,7 @@ use App\Models\KebijakanAplikasi;
 use App\Models\LinkTerkait;
 use App\Models\NamaLaboratorium;
 use App\Models\PemeriksaanAlat;
+use App\Models\Peminjaman;
 use App\Models\PerawatanAlat;
 use App\Models\ProfileApp;
 use App\Models\ProfileLaboratorium;
@@ -44,6 +47,10 @@ class FrontendController extends Controller
     public function bukuTamu()
     {
         return view('frontend.buku_tamu');
+    }
+    public function peminjaman()
+    {
+        return view('frontend.peminjaman');
     }
     public function view($kode)
     {
@@ -264,6 +271,25 @@ class FrontendController extends Controller
         }
         return response()->json($output);
     }
+    public function checkTarunaDosen (Request $request)
+    {
+        if($request->status == 'TARUNA'){
+            $query = AkademikMahasiswa::whereNim($request->nik_notar)->first();
+            if(!empty($query)){
+                $response = ['status' => true,'nama_peminjam' => $query->nama, 'telepon' => $query->telp, ];
+            }else{
+                $response = ['status' => false];
+            }
+        }else{
+            $query = GroupPegawai::whereNik($request->nik_notar)->first();
+            if(!empty($query)){
+                $response = ['status' => true,'nama_peminjam' => $query->nama, 'telepon' => $query->telp];
+            }else{
+                $response = ['status' => false];
+            }
+        }
+        return response()->json($response);
+    }
     public function saveBukuTamu(Request $request)
     {
         date_default_timezone_set("Asia/Makassar");
@@ -305,6 +331,188 @@ class FrontendController extends Controller
             ]);
             $output = array("status" => TRUE);
         }
+        return response()->json($output);
+    }
+    public function saveBiodataPeminjaman(Request $request)
+    {
+        date_default_timezone_set("Asia/Makassar");
+
+        $errors					= [];
+        $validator = Validator::make($request->all(), [
+            'fid_lab' => 'required',
+            'status_peminjaman' => 'required',
+            'nik_notar' => 'required',
+            'nama_peminjam' => 'required|max:120',
+            'telepon' => 'required|max:15',
+            'prodi_instansi' => 'required|max:120',
+            'tgl_peminjaman' => 'required',
+            'tgl_pengembalian' => 'required',
+        ],[
+            'fid_lab.required' => 'Laboratorium masih kosong...',
+            'status_peminjaman.required' => 'Status peminjam masih kosong...',
+            'nik_notar.required' => 'Nik atau notar masih kosong...',
+            'nama_peminjam.required' => 'Nama peminjam masih kosong...',
+            'nama_peminjam.max' => 'Nama peminjam tidak lebih dari 120 karakter...',
+            'prodi_instansi.required' => 'Prodi atau instansi masih kosong...',
+            'prodi_instansi.max' => 'Prodi atau instansi tidak lebih dari 120 karakter...',
+            'telepon.required' => 'Telepon masih kosong...',
+            'telepon.max' => 'Telepon tidak lebih dari 15 digit...',
+            'tgl_peminjaman.required' => 'Tanggal peminjaman masih kosong...',
+            'tgl_pengembalian.required' => 'Tanggal pengembalian masih kosong...',
+        ]);
+    
+        if($validator->fails()){
+            foreach ($validator->errors()->getMessages() as $item) {
+                $errors[] = $item;
+            }
+            $output = array("status" => FALSE, "pesan_code" => 'format_inputan', "pesan_error" => $errors);
+        } else {
+            // for create no pinjaman
+            $noPinjaman = preg_replace('/[\.\s:-]/', '', date("Y-m-d H:i:s"));
+            // parse date
+            $tanggalPinjam=Carbon::createFromFormat('d/m/Y', $request->input('tgl_peminjaman'))->format('Y-m-d'); 
+            $tanggalKembali=Carbon::createFromFormat('d/m/Y', $request->input('tgl_pengembalian'))->format('Y-m-d'); 
+            $data = [
+                'fid_lab' => $request->input('fid_lab'),
+                'status_peminjaman' => $request->input('status_peminjaman'),
+                'nik_notar' => $request->input('nik_notar'),
+                'nama_peminjam' => $request->input('nama_peminjam'),
+                'telepon' => $request->input('telepon'),
+                'prodi_instansi' => $request->input('prodi_instansi'),
+                'tgl_peminjaman' => $tanggalPinjam,
+                'tgl_pengembalian' => $tanggalKembali,
+                'no_peminjaman' => $noPinjaman,
+                'user_add' => $request->input('nama_peminjam'),
+                'created_at' => Carbon::now()
+            ];
+            $peminjaman = Peminjaman::updateOrCreate(['id' => $request->idp], $data);
+            $output = array("status" => TRUE, 'idp_peminjaman' => $peminjaman->id, 'fid_lab' => $request->fid_lab);
+        }
+        return response()->json($output);
+    }
+    public function alatPinjaman(Request $request)
+    {
+        $query = DataAlatPeraga::whereFidLab($request->idp_lab)->orderBy('id', 'DESC');
+        $data = $query->get();
+
+        $output = '';
+        $output .= '';
+        foreach($data as $row){
+            $checkbox = '
+                <div class="form-check form-check-custom form-check-sm">
+                    <input class="form-check-input checkbox" type="checkbox" value="'.$row->id.'" id="check-'.$row->id.'"/>
+                    <label class="form-check-label align-middle" for="check-'.$row->id.'">   
+                        <h6 class="text-gray-600 fw-semibold">'.$row->nama_alat_peraga.'</h6>
+                    </label>
+                </div>
+            ';
+            // for image
+            $file_image = $row->foto;
+            if($file_image==''){
+                $url_file = asset('dist/img/default-placeholder.png');
+            } else {
+                if (!file_exists(public_path(). '/dist/img/alat-peraga/'.$file_image)){
+                    $url_file = asset('dist/img/default-placeholder.png');
+                    $file_image = NULL;
+                }else{
+                    $url_file = url('dist/img/alat-peraga/'.$file_image);
+                }
+            }
+            $fileCustom = '<a class="d-block overlay w-100 image-popup" href="'.$url_file.'" title="'.$file_image.'">
+                <img src="'.$url_file.'" class="overlay-wrapper bgi-no-repeat bgi-position-center bgi-size-cover rounded w-100" alt="'.$file_image.'"/>
+                <div class="overlay-layer card-rounded bg-dark bg-opacity-25">
+                    <span class="badge badge-dark"><i class="las la-search fs-3 text-light"></i></span>
+                </div>    
+            </a>';
+            
+            // for output
+            $output .= '
+                <tr>
+                    <td width="20" align="center">
+                    '.$checkbox.'
+                    </td>
+                    <td width="10" align="center">'.$row->kode_alat_peraga.'</td>
+                    <td width="30" align="center">'.$fileCustom.'</td>
+                </tr>
+            ';
+        }
+        $output .= '';
+        return response()->json($output);
+    }
+    public function checkApproveAlat(Request $request)
+    {
+        $fidHeaderPinjaman = $request->fid_header_pinjaman;
+        $fidAlatArray = $request->alatarray;
+
+        $dtAlatPeraga = DataAlatPeraga::whereIn('id', $fidAlatArray)->get();
+        
+        $outputAlatPinjaman = '';
+        $outputAlatPinjaman .= '';
+        foreach($dtAlatPeraga as $row){
+            // check if exist on detail peminjaman
+            $check = DetailPinjaman::whereFidPeminjaman($fidHeaderPinjaman)->whereFidAlatPeraga($row->id)->first();
+            $value = 1;
+            if (!empty($check)) {$value = $check->jumlah;}
+
+            $outputAlatPinjaman .= '
+                <tr>
+                    <td class="p-3" width="40">'.$row->nama_alat_peraga.'</td>
+                    <td width="30" align="center">'.$row->kode_alat_peraga.'</td>
+                    <td width="30" align="center">
+                        <input type="text" name="jmlh_alat[]" class="form-control input-sm inputmax6" value="'.$value.'">
+                    </td>
+                </tr>
+            ';
+        }
+        $outputAlatPinjaman .= '';
+
+        // when data alat pinjaman is empty
+        if(count($dtAlatPeraga) < 1){
+            $outputAlatPinjaman = '<div class="col-lg-12 text-center"><i>Tidak ada alat yang dipilih... </i></div>';
+        }
+        $response = array(
+            'status' => TRUE,
+            'outputAlatPinjaman' => $outputAlatPinjaman,
+            'jmlhAlat' => count($dtAlatPeraga),
+        );
+        return response()->json($response);
+    }
+    public function alatPinjamanSave(Request $request)
+    {
+        $fidAlatArray = explode(',', $request->input('array_alat_pinjaman'));
+        $jmlhAlat = $request->input('jmlh_alat');
+
+        // delete first on detail peminjaman
+        DetailPinjaman::whereFidPeminjaman($request->fid_peminjaman)->delete();
+        // looping save peminjaman on table
+        for ($i=0; $i < count($fidAlatArray); $i++) { 
+            $jmlh = $jmlhAlat[$i];
+            $idp_alat = $fidAlatArray[$i];
+            DetailPinjaman::create([
+                'fid_peminjaman' => $request->fid_peminjaman,
+                'fid_alat_peraga' => $idp_alat,
+                'jumlah' => $jmlh,
+            ]);
+        } 
+
+        // data response
+        $peminjaman = Peminjaman::whereId($request->fid_peminjaman)->first();
+        $peminjaman->nama_laboratorium = $peminjaman->lab->nama_laboratorium;
+        $peminjaman->tgl_peminjaman = date('d-m-Y', strtotime($peminjaman->tgl_peminjaman));
+        $peminjaman->tgl_pengembalian = date('d-m-Y', strtotime($peminjaman->tgl_pengembalian));
+        $dataAlat = [];
+        foreach(DetailPinjaman::whereFidPeminjaman($request->fid_peminjaman)->get() as $row){
+            $dataAlat[] = [
+                'nama_alat' => $row->alat->nama_alat_peraga,
+                'kode_alat' => $row->alat->kode_alat_peraga,
+                'jumlah' => $row->jumlah
+            ];
+        }
+        $data= [
+            'peminjaman' => $peminjaman,
+            'dt_alat' => $dataAlat
+        ];
+        $output = array('status' => TRUE, 'row' => $data);
         return response()->json($output);
     }
 }

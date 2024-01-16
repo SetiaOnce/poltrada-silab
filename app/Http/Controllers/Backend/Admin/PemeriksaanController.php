@@ -15,11 +15,7 @@ class PemeriksaanController extends Controller
 {
     public function index()
     {
-        if(!session()->get('login_akses')) { 
-            return redirect('/login'); 
-        }
-        $data['header_title'] = 'Data Pemeriksaan Alat';
-        
+        $data['header_title'] = 'Data Pemeriksaan Alat';   
         return view('backend.admin.pemeriksaan', $data);
     }
     public function data(Request $request)

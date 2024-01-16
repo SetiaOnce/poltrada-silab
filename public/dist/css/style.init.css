@@ -164,3 +164,13 @@
     color: #181c32;
 }
 /*--end Value Select2 Custom--*/
+
+@media print {
+    body * {
+        visibility: visible;
+    }
+
+    .hide-on-print {
+        display: none;
+    }
+}

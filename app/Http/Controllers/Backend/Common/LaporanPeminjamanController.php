@@ -14,16 +14,12 @@ class LaporanPeminjamanController extends Controller
 {
     public function index()
     {
-        if(!session()->get('login_akses')) { 
-            return redirect('/login'); 
-        }
-        $data['header_title'] = 'Laporan Peminjaman';
-        
+        $data['header_title'] = 'Laporan Peminjaman';   
         return view('backend.common.laporan_peminjaman', $data);
     }
     public function data(Request $request)
     {
-        $query = Peminjaman::orderBy('tgl_peminjaman', 'DESC');
+        $query = Peminjaman::orderBy('tgl_peminjaman', 'DESC')->whereIn('status', [1, 2, 3]);
         if($request->input('tgl_start') AND $request->input('tgl_end')){
             $tgl_start = Carbon::createFromFormat('d/m/Y', $request->input('tgl_start'))->format('Y-m-d');
             $tgl_end = Carbon::createFromFormat('d/m/Y', $request->input('tgl_end'))->format('Y-m-d');
@@ -37,8 +33,10 @@ class LaporanPeminjamanController extends Controller
             })
             ->editColumn('status', function ($row) {
                 $status = '<span class="badge badge-warning">BELUM DIKEMBALIKAN</span>';
-                if($row->status == 1){
+                if($row->status == 2){
                     $status = '<span class="badge badge-success">SUDAH DIKEMBALIKAN</span>';
+                }else if($row->status == 3){
+                    $status = '<span class="badge badge-danger">DITOLAK</span>';
                 }
                 return $status;
             })

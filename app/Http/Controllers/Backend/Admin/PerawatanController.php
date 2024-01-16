@@ -15,11 +15,7 @@ class PerawatanController extends Controller
 {
     public function index()
     {
-        if(!session()->get('login_akses')) { 
-            return redirect('/login'); 
-        }
-        $data['header_title'] = 'Data Perawatan Alat';
-        
+        $data['header_title'] = 'Data Perawatan Alat';   
         return view('backend.admin.perawatan', $data);
     }
     public function data(Request $request)

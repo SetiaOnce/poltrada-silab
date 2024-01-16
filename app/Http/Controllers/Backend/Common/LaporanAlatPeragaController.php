@@ -15,11 +15,7 @@ class LaporanAlatPeragaController extends Controller
 {
     public function index()
     {
-        if(!session()->get('login_akses')) { 
-            return redirect('/login'); 
-        }
-        $data['header_title'] = 'Laporan Alat Peraga';
-        
+        $data['header_title'] = 'Laporan Alat Peraga';   
         return view('backend.common.laporan_alat_peraga', $data);
     }
     public function data(Request $request)

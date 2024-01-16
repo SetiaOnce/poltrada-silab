@@ -15,11 +15,7 @@ class FaqController extends Controller
 {
     public function index()
     {
-        if(!session()->get('login_akses')) { 
-            return redirect('/login'); 
-        }
-        $data['header_title'] = 'Frequesntly Asked Questions';
-        
+        $data['header_title'] = 'Frequesntly Asked Questions';   
         return view('backend.admin.faq', $data);
     }
     public function data(Request $request)

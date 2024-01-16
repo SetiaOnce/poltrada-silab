@@ -13,11 +13,7 @@ class LaporanPerawatanController extends Controller
 {
     public function index()
     {
-        if(!session()->get('login_akses')) { 
-            return redirect('/login'); 
-        }
-        $data['header_title'] = 'Laporan Perawatan';
-        
+        $data['header_title'] = 'Laporan Perawatan';   
         return view('backend.common.laporan_perawatan', $data);
     }
     public function data(Request $request)

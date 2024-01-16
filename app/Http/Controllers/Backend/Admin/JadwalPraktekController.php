@@ -15,11 +15,7 @@ class JadwalPraktekController extends Controller
 {
     public function index()
     {
-        if(!session()->get('login_akses')) { 
-            return redirect('/login'); 
-        }
-        $data['header_title'] = 'Data Jadwal Praktek';
-        
+        $data['header_title'] = 'Data Jadwal Praktek';   
         return view('backend.admin.jadwal_praktek', $data);
     }
     public function data(Request $request)

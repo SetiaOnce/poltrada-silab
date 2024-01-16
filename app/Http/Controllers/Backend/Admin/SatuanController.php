@@ -14,9 +14,6 @@ class SatuanController extends Controller
 {
     public function index()
     {
-        if(!session()->get('login_akses')) { 
-            return redirect('/login'); 
-        }
         $data['header_title'] = 'Satuan';
         return view('backend.admin.satuan', $data);
     }

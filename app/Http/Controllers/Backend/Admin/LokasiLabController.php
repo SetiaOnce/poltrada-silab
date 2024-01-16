@@ -13,11 +13,7 @@ class LokasiLabController extends Controller
 {
     public function index()
     {
-        if(!session()->get('login_akses')) { 
-            return redirect('/login'); 
-        }
-        $data['header_title'] = 'Lokasi Laboratorium';
-        
+        $data['header_title'] = 'Lokasi Laboratorium';   
         return view('backend.admin.lokasi_lab', $data);
     }
     public function data(Request $request)

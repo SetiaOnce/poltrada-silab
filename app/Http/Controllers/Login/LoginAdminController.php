@@ -4,23 +4,66 @@ namespace App\Http\Controllers\Login;
 
 use App\Helpers\Shortcut;
 use App\Http\Controllers\Controller;
-use App\Models\Aplikasi;
 use App\Models\ProfileApp;
 use App\Models\SsoAplikasi;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Redirect;
 
 class LoginAdminController extends Controller
 {
     public function index()
     {
-        if(session()->get('login_akses')) { 
+        if(!session()->get('login_akses')) { 
             return redirect('/app_admin/dashboard'); 
-        } 
-        return view('login.login_admin');
+        }else{
+            $pegawai_token = 'vmdfegZR0SGyxMyT9my2pUkUZKcKNWAxkBpwAGGK9iedSIVBZDzHc3fEmdELsTPd';
+            setcookie("pegawai_token", $pegawai_token, time() + 10 * 365 * 24 * 60 * 60, "/");
+            $body = [
+                'pegawai_token' => $_COOKIE["pegawai_token"],
+                'pegawai_aplikasi' => SsoAplikasi::where('id', 20)->first()->access,
+            ];
+            $api_response = Http::withOptions(['verify'=>false])
+            ->post('https://pegawai.poltradabali.ac.id/api/login', $body);
+            $response=$api_response->getBody()->getContents();
+            $get_contents = json_decode($response);
+            if($get_contents->status==true) {   
+                session([
+                    'login_akses' => true, 
+                    'pegawaiId'=> $get_contents->data->pegawaiId,  
+                    'nama'=> $get_contents->data->nama,  
+                    'nik'=> $get_contents->data->nik,  
+                    'npwp'=> $get_contents->data->npwp,  
+                    'nip'=> $get_contents->data->nip,
+                    'pin'=> $get_contents->data->pin,  
+                    'email'=> $get_contents->data->email,  
+                    'nidn'=> $get_contents->data->nidn,  
+                    'no_kk'=> $get_contents->data->no_kk,  
+                    'agama'=> $get_contents->data->agama,  
+                    'alamat'=> $get_contents->data->alamat,  
+                    'nikah'=> $get_contents->data->nikah,  
+                    'golongan_darah'=> $get_contents->data->golongan_darah,  
+                    'status'=> $get_contents->data->status,  
+                    'telp'=> $get_contents->data->telp,  
+                    'jk'=> $get_contents->data->jk,  
+                    'sk_cpns'=> $get_contents->data->sk_cpns,  
+                    'tgl_sk_cpns'=> $get_contents->data->tgl_sk_cpns,  
+                    'sk_pengangkatan'=> $get_contents->data->sk_pengangkatan,  
+                    'tgl_pengangkatan'=> $get_contents->data->tgl_pengangkatan,  
+                    'lembaga_pengangkatan'=> $get_contents->data->lembaga_pengangkatan,  
+                    'unit_kerja'=> $get_contents->data->unit_kerja,  
+                    'foto'=> $get_contents->data->foto,  
+                    'aplikasi'=> $get_contents->data->aplikasi,  
+                    'level'=> $get_contents->data->level,
+                    'key_level'=> $get_contents->data->key_level,   
+                ]);
+                return redirect('/app_admin/dashboard');
+            }else{
+                return Redirect::away('https://pegawai.poltradabali.ac.id/login');
+            }
+        }
     }
-
     public function login(Request $request)
     {
         date_default_timezone_set("Asia/Jakarta");
@@ -93,7 +136,7 @@ class LoginAdminController extends Controller
             } 
 
         }
-    return response()->json($output);
+        return response()->json($output);
     }
     public function laodSystemLogin()
     {

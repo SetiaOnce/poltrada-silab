@@ -134,6 +134,11 @@
         </table>
          <table  width="100%" style="margin-top: 15px;" style="padding-left: 5%;">
             <tr>
+                <td style="width: 25%;  font-size: 9pt; vertical-align: top;">STATUS PEMINJAM</td>
+                <td style="width: 1%;  font-size: 9pt; vertical-align: top;"><b>:</b></td>
+                <td style=" font-size: 9pt; vertical-align: top;"><b>{{ $peminjaman->status_peminjaman }}</b></td>
+            </tr>
+            <tr>
                 <td style="width: 25%;  font-size: 9pt; vertical-align: top;">NIK / NOTAR</td>
                 <td style="width: 1%;  font-size: 9pt; vertical-align: top;"><b>:</b></td>
                 <td style=" font-size: 9pt; vertical-align: top;"><b>{{ $peminjaman->nik_notar }}</b></td>
@@ -156,15 +161,28 @@
         </table>
         <table  width="100%" style="margin-top: 30px;">
             <tr>
-                <td style="width: 25%;  font-size: 10pt; vertical-align: top;">Telah dilakukan serah terima alat-alat peraga tersebut dibawah ini :</td>
+                <td style="width: 25%;  font-size: 10pt; vertical-align: top;">Telah dilakukan serah terima alat-alat peraga tersebut dibawah ini dengan jumlah ({{ count($dtPeminjaman) }}) alat:</td>
             </tr>
-            <table  width="100%" style="margin-top: 15px;" style="padding-left: 5%;">
+        </table>
+        <table id="tableInfo" style="font-size: 10px;">
+            <thead >
+                <tr>     
+                    <th style="width:10%; text-align: center;" >NO</th>
+                    <th style="width:50%;" >NAMA ALAT</th>
+                    <th style="width:20%; text-align: center;" >KODE ALAT</th>    
+                    <th style="width:20%; text-align: center;" >JUMLAH</th>    
+                </tr>
+            </thead>
+            <tbody>
                 @foreach ($dtPeminjaman as $no => $item)
                     <tr>
-                        <td style="width: 25%;  font-size: 9pt; vertical-align: top;"><b><span>{{ $no+1 }}) </span>{{ $item->alat->nama_alat_peraga }}</b></td>
+                        <td align="center">{{ $no+1 }}</td>
+                        <td >{{ $item->alat->nama_alat_peraga }}</td>
+                        <td align="center">{{ $item->alat->kode_alat_peraga }}</td>
+                        <td align="center">{{ $item->jumlah }}</td>
                     </tr>
                 @endforeach
-            </table>
+            </tbody>
         </table>
         <table style="margin-top: 20px;">
             <tr>

@@ -14,11 +14,7 @@ class LaporanJadwalPraktekController extends Controller
 {
     public function index()
     {
-        if(!session()->get('login_akses')) { 
-            return redirect('/login'); 
-        }
-        $data['header_title'] = 'Laporan Jadwal Praktek';
-        
+        $data['header_title'] = 'Laporan Jadwal Praktek';   
         return view('backend.common.laporan_jadwal_praktek', $data);
     }
     public function data(Request $request)

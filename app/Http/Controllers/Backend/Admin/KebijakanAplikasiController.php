@@ -14,11 +14,7 @@ class KebijakanAplikasiController extends Controller
 {
     public function index()
     {
-        if(!session()->get('login_akses')) { 
-            return redirect('/login'); 
-        }
-        $data['header_title'] = 'Kebijakan Aplikasi';
-        
+        $data['header_title'] = 'Kebijakan Aplikasi';   
         return view('backend.admin.kebijakan_aplikasi', $data);
     }
 

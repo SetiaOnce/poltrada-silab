@@ -17,11 +17,7 @@ class DataAlatPeragaController extends Controller
 {
     public function index()
     {
-        if(!session()->get('login_akses')) { 
-            return redirect('/login'); 
-        }
-        $data['header_title'] = 'Data Alat Peraga';
-        
+        $data['header_title'] = 'Data Alat Peraga';   
         return view('backend.admin.data_alat_peraga', $data);
     }
     public function data(Request $request)

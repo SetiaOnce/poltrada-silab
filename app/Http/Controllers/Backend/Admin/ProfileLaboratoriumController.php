@@ -11,11 +11,7 @@ class ProfileLaboratoriumController extends Controller
 {
     public function index()
     {
-        if(!session()->get('login_akses')) { 
-            return redirect('/login'); 
-        }
-        $data['header_title'] = 'Profile Laboratorium';
-        
+        $data['header_title'] = 'Profile Laboratorium';   
         return view('backend.admin.profile_laboratorium', $data);
     }
 

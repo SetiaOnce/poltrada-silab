@@ -12,6 +12,7 @@ Route::controller(FrontendController::class)->group(function(){
     Route::get('/profile', 'profile');
     Route::get('/faq', 'faq');
     Route::get('/buku-tamu', 'bukuTamu');
+    Route::get('/peminjaman', 'peminjaman');
     Route::get('/view/{kode}', 'view');
 
     // ajax request for frontend page
@@ -25,7 +26,12 @@ Route::controller(FrontendController::class)->group(function(){
     Route::get('/ajax_load_faq', 'loadFaq');
     Route::post('/ajax_save_jadwal_praktek', 'saveJadwalPraktek');
     Route::get('/ajax_get_data_pegawai', 'getDataPegawai');
+    Route::get('/ajax/check_data_taruna_dosen', 'checkTarunaDosen');
     Route::post('/ajax_save_buku_tamu', 'saveBukuTamu');
+    Route::post('/ajax/peminjaman_biodata_save', 'saveBiodataPeminjaman');
+    Route::post('/ajax/load_alat_pinjaman', 'alatPinjaman');
+    Route::post('/ajax/check_alat_approve', 'checkApproveAlat');
+    Route::post('/ajax/alat_pinjaman_save', 'alatPinjamanSave');
 });
 
 Route::controller(InformasiController::class)->group(function(){
@@ -59,12 +65,14 @@ Route::group(['prefix' => 'select'], function () {
 //  ===========>> SELECT 2 END <<============== //
 
 // App Admin
-Route::group(['prefix' => 'app_admin'], function () {
-    require base_path('routes/common.php');
-    Route::group(['middleware' => 'checkRole:silab-administrator'], function() {
-        require base_path('routes/admin.php');
-    });
-    Route::group(['middleware' => 'checkRole:silab-kepala-unit-laboratorium'], function() {
-        require base_path('routes/kanit.php');
+Route::group(['middleware' => 'Session'], function() {
+    Route::group(['prefix' => 'app_admin'], function () {
+        require base_path('routes/common.php');
+        Route::group(['middleware' => 'checkRole:silab-administrator'], function() {
+            require base_path('routes/admin.php');
+        });
+        Route::group(['middleware' => 'checkRole:silab-kepala-unit-laboratorium'], function() {
+            require base_path('routes/kanit.php');
+        });
     });
 });

@@ -1,4 +1,4 @@
-<div id="kt_app_header" class="app-header " data-kt-sticky="true" data-kt-sticky-activate="{default: true, lg: true}" data-kt-sticky-name="app-header-minimize" data-kt-sticky-offset="{default: '200px', lg: '0'}" data-kt-sticky-animation="false" style="top:0px;" data-kt-sticky-enabled="true">
+<div id="kt_app_header" class="app-header hide-on-print" data-kt-sticky="true" data-kt-sticky-activate="{default: true, lg: true}" data-kt-sticky-name="app-header-minimize" data-kt-sticky-offset="{default: '200px', lg: '0'}" data-kt-sticky-animation="false" style="top:0px;" data-kt-sticky-enabled="true">
     <!--begin::Header container-->
     <div class="app-container container-xxl d-flex align-items-stretch justify-content-between " id="kt_app_header_container">
         <!--begin::Logo-->
@@ -56,6 +56,16 @@
                         <a class="menu-link {{ strtolower($activeMenu) == 'buku_tamu' ? 'active' : '' }}" href="{{ url('/buku-tamu') }}" >
                             <span class="menu-icon"><i class="bi bi-book fs-4"></i></span>
                             <span class="menu-title">BUKU TAMU</span>
+                        </a>
+                        <!--end:Menu link-->
+                    </div>
+                    <!--end:Menu item--> 
+                    <!--begin:Menu item-->
+                    <div class="menu-item">
+                        <!--begin:Menu link-->
+                        <a class="menu-link {{ strtolower($activeMenu) == 'peminjaman' ? 'active' : '' }}" href="{{ url('/peminjaman') }}" >
+                            <span class="menu-icon"><i class="bi bi-cart fs-4"></i></span>
+                            <span class="menu-title">PEMINJAMAN</span>
                         </a>
                         <!--end:Menu link-->
                     </div>

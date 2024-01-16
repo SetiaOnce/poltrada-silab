@@ -15,11 +15,7 @@ class NamaLabController extends Controller
 {
     public function index()
     {
-        if(!session()->get('login_akses')) { 
-            return redirect('/login'); 
-        }
-        $data['header_title'] = 'Nama Laboratorium';
-        
+        $data['header_title'] = 'Nama Laboratorium';   
         return view('backend.admin.nama_laboratorium', $data);
     }
     public function data(Request $request)

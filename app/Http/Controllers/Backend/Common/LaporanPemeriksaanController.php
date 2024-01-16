@@ -13,11 +13,7 @@ class LaporanPemeriksaanController extends Controller
 {
     public function index()
     {
-        if(!session()->get('login_akses')) { 
-            return redirect('/login'); 
-        }
-        $data['header_title'] = 'Laporan Pemeriksaan';
-        
+        $data['header_title'] = 'Laporan Pemeriksaan';   
         return view('backend.common.laporan_pemeriksaan', $data);
     }
     public function data(Request $request)

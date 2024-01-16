@@ -9,6 +9,7 @@ const _loadNotification = () => {
         dataType: "JSON",
         success: function (data) {
           $('.notif-jadwal-praktek').html(data.jadwal_praktek);
+          $('.notif-peminjaman-alat').html(data.peminjaman_alat);
         }
     });
 }
