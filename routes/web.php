@@ -4,8 +4,20 @@ use App\Http\Controllers\Frontend\FrontendController;
 use App\Http\Controllers\Frontend\InformasiController;
 use App\Http\Controllers\Login\LoginAdminController;
 use App\Http\Controllers\SelectController;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Session;
+
+// Frontend
+Route::get('/artisan', function() {
+    // Artisan::call('key:generate');
+    Artisan::call('cache:clear');
+    Artisan::call('route:cache');
+    Artisan::call('route:clear');
+    Artisan::call('view:clear');
+    Artisan::call('config:cache');
+    return 'DONE';
+});
 
 Route::controller(FrontendController::class)->group(function(){
     Route::get('/', 'index');

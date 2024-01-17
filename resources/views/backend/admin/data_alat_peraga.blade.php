@@ -128,48 +128,6 @@
         </div>
         <div class="card-toolbar">
             <div class="d-flex justify-content-end">
-                {{-- <div class="m-0 me-2">
-                    <!--begin::Menu toggle-->
-                    <a href="#" class="btn btn-sm btn-info font-weight-bolder" data-kt-menu-trigger="click" data-kt-menu-placement="bottom-end">             
-                        <i class="bi bi-funnel text-light me-1"></i> Filter
-                    </a>
-                    <!--end::Menu toggle-->
-                    <!--begin::Menu 1-->
-                    <div class="menu menu-sub menu-sub-dropdown w-500px w-md-400px" data-kt-menu="true" id="kt_menu_64e5cdce6c4af" style="">
-                        <!--begin::Header-->
-                        <div class="px-7 py-5">
-                            <div class="fs-5 text-dark fw-bold">Filter Data Alat Peraga</div>
-                        </div>
-                        <!--end::Header-->
-                        <!--begin::Menu separator-->
-                        <div class="separator border-gray-200"></div>
-                        <!--end::Menu separator-->
-                        <!--begin::Form-->
-                        <div class="px-7 py-5">
-                            <div class="form-group mb-5">
-                                <label class="fw-bolder" for="filterDtKategori">Kategori: </label>
-                                <select id="filterDtKategori" name="filterDtKategori" class="form-control selectpicker show-tick" data-live-search="true" title="Filter kategori..." data-style="btn-secondary text-dark"></select>
-                            </div>
-                            <div class="form-group">
-                                <label class="fw-bolder" for="filterDtStatus">Status: </label>
-                                <select id="filterDtStatus" name="filterDtStatus" class="form-control selectpicker show-tick" data-style="btn-secondary" title="-- Semua --">
-                                    <option data-icon="mdi mdi-file-document font-size-lg bs-icon" value="5" selected>Semua</option>
-                                    <option data-icon="mdi mdi-earth font-size-lg bs-icon" value="1" >Publik</option>
-                                    <option data-icon="mdi mdi-file font-size-lg bs-icon" value="0">Draft</option>
-                                    <option data-icon="mdi mdi-delete-variant font-size-lg bs-icon" value="100">Sampah</option>
-                                </select>
-                            </div>
-                            <div class="separator border-gray-200 mb-2 mt-4"></div>
-                            <div class="d-flex justify-content-end">        
-                                <button type="submit" class="btn btn-sm btn-danger me-2" id="btn-resetFilter" data-kt-menu-dismiss="false"><i class="bi bi-arrow-clockwise"></i> Reset</button>
-                                <button type="submit" class="btn btn-sm btn-primary" id="btn-applyFilter" data-kt-menu-dismiss="true">Apply</button>
-                            </div>
-                            <!--end::Actions-->
-                        </div>
-                        <!--end::Form-->
-                    </div>
-                    <!--end::Menu 1-->        
-                </div> --}}
                 <button type="button" class="btn btn-sm btn-primary me-2" data-bs-toggle="tooltip" title="Tambah data Baru!" onclick="_addData();"><i class="las la-plus fs-3"></i> Tambah</button>
             </div>
         </div>
@@ -178,7 +136,7 @@
     <div class="card-body">
         <div class="table-responsive">
             <!--begin::Table-->
-            <table class="table table-rounded  table-hover align-middle table-row-bordered border gy-3 gs-3" id="dt-alatPeraga">
+            <table class="table table-rounded table-hover align-middle table-row-bordered border gy-3 gs-3" id="dt-alatPeraga">
                 <thead>
                     <tr class="fw-bolder text-uppercase bg-dark text-light">
                         <th class="text-center align-middle px-2 border-bottom-2 border-gray-200">No.</th>
@@ -187,6 +145,7 @@
                         <th class="align-middle px-2 border-bottom-2 border-gray-200">Nama Alat</th>
                         <th class="align-middle px-2 border-bottom-2 border-gray-200">Jumlah</th>
                         <th class="align-middle px-2 border-bottom-2 border-gray-200">Satuan</th>
+                        <th class="align-middle px-2 border-bottom-2 border-gray-200">Perawatan</th>
                         <th class="align-middle px-2 border-bottom-2 border-gray-200">Foto</th>
                         <th class="text-center align-middle px-2 border-bottom-2 border-gray-200">Aksi</th>
                     </tr>
@@ -198,6 +157,26 @@
     </div>
 </div>
 <!--end::List Table Data-->
+
+<!--begin::modal detail perawatan-->
+<div class="modal fade" tabindex="-1" id="modalDetailPerawatan" data-bs-backdrop="static">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title"></h3>
+                <!--begin::Close-->
+                <div class="btn btn-icon btn-sm btn-active-light-primary ms-2" data-bs-dismiss="modal" aria-label="Close">
+                    <i class="bi bi-x-lg fs-1"></i>
+                </div>
+                <!--end::Close-->
+            </div>
+            <div class="modal-body">
+                
+            </div>
+        </div>
+    </div>
+</div>
+<!--end::modal detail perawatan-->
 
 @section('js')
 <script src="{{ asset('/dist/plugins/bootstrap-select/js/bootstrap-select.min.js') }}"></script>

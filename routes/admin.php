@@ -74,6 +74,7 @@ Route::controller(DataAlatPeragaController::class)->group(function(){
     Route::post('/ajax/alat_peraga_save', 'store');
     Route::post('/ajax/alat_peraga_update', 'update');
     Route::post('/ajax/alat_peraga_update_status', 'updateStatus');
+    Route::get('/ajax/load_detail_perawatan', 'detaiPerawatan');
     Route::get('/alat_peraga_barcode/{id}/{ukuran}', 'barcode');
 });
 // for handle peminjaman alat

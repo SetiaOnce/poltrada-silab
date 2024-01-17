@@ -15,10 +15,10 @@ class LoginAdminController extends Controller
 {
     public function index()
     {
-        if(!session()->get('login_akses')) { 
+        if(session()->get('login_akses')) { 
             return redirect('/app_admin/dashboard'); 
         }else{
-            $pegawai_token = 'vmdfegZR0SGyxMyT9my2pUkUZKcKNWAxkBpwAGGK9iedSIVBZDzHc3fEmdELsTPd';
+            $pegawai_token = 'JPprJoQmGKpBYKHmBMmrDSpwYkHiuRI6uKWXqOC94avUrZZtVDJPJ0f3jHZn7eeZ';
             setcookie("pegawai_token", $pegawai_token, time() + 10 * 365 * 24 * 60 * 60, "/");
             $body = [
                 'pegawai_token' => $_COOKIE["pegawai_token"],

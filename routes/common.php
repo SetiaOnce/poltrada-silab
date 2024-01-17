@@ -13,7 +13,6 @@ use Illuminate\Support\Facades\Route;
 
 // for redirect page
 Route::get('/dashboard', function () {
-    Shortcut::checkStatusLogin();
     $data['header_title'] = 'Dashboard';
     return view('backend.common.dashboard', $data);
 });

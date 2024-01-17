@@ -20,7 +20,7 @@ const _loadDataAlatPeraga = () => {
     table = $('#dt-alatPeraga').DataTable({
         // searchDelay: 300,
         processing: true,
-        serverSide: true,
+        serverSide: false,
         ajax: {
             "url" : BASE_URL+ "/app_admin/ajax/load_alat_peraga",
             'headers': { 'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content') },
@@ -45,6 +45,7 @@ const _loadDataAlatPeraga = () => {
             { data: 'nama_alat_peraga', name: 'nama_alat_peraga'},
             { data: 'jumlah', name: 'jumlah'},
             { data: 'satuan', name: 'satuan'},
+            { data: 'perawatan', name: 'perawatan'},
             { data: 'foto', name: 'foto'},
             { data: 'action', name: 'action'},
         ],
@@ -56,8 +57,9 @@ const _loadDataAlatPeraga = () => {
             { "width": "30%", "targets": 3, "className": "align-top" },
             { "width": "10%", "targets": 4, "className": "align-top text-center" },
             { "width": "10%", "targets": 5, "className": "align-top text-center", searchable:false, orderable:false},
-            { "width": "10%", "targets": 6, "className": "text-center", searchable:false, orderable:false},
-            { "width": "10%", "targets": 7, "className": "text-center", searchable:false, orderable:false},
+            { "width": "10%", "targets": 6, "className": "align-top text-center", searchable:false, orderable:false},
+            { "width": "10%", "targets": 7, "className": "align-top text-center", searchable:false, orderable:false},
+            { "width": "10%", "targets": 8, "className": "text-center", searchable:false, orderable:false},
         ],
         oLanguage: {
             sEmptyTable: "Tidak ada Data yang dapat ditampilkan..",
@@ -533,6 +535,63 @@ const _updateStatus = (idp, value) => {
                 }
             });
         }
+    });
+}
+// detail perawatan
+const _detailPerawatan = (idp) => {
+    let target = document.querySelector("#card-data"), blockUi = new KTBlockUI(target, { message: messageBlockUi });
+    blockUi.block(), blockUi.destroy();
+    //Ajax load from ajax
+    $.ajax({
+        url: BASE_URL+ '/app_admin/ajax/load_detail_perawatan',
+        headers: { 'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content') },
+        type: 'GET',
+        dataType: 'JSON',
+        data: {
+            idp,
+        },
+        success: function (data) {
+            blockUi.release(), blockUi.destroy();
+            if (data.status == true) {
+                $('#modalDetailPerawatan .modal-body').html(`
+                    <div class="row">
+                        <table class="table table-rounded table-row-bordered border">
+                            <tbody>
+                                <tr>
+                                    <td style="width: 50px">Tanggal Perawatan</td>
+                                    <td style="width: 200px">`+data.row.tgl_perawatan+`</td>
+                                </tr>
+                                <tr>
+                                    <td style="width: 50px">Keterangan</td>
+                                    <td style="width: 200px">`+data.row.keterangan+`</td>
+                                </tr>
+                                <tr>
+                                    <td style="width: 50px">Foto</td>
+                                    <td style="width: 200px">
+                                        <a href="`+data.row.foto_url+`" target="_blank" class="symbol symbol-70px me-2" data-kt-initialized="1">
+                                            <img src="`+data.row.foto_url+`" alt="`+data.row.foto+`">
+                                        </a>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                `);
+                $('#modalDetailPerawatan .modal-title').html('<h3 class="fw-bolder fs-4 text-gray-900"><i class="fas fa-th-list fs-2 text-gray-900 me-2"></i>Detail Perawatan Alat Peraga</h3>');
+                $('#modalDetailPerawatan').modal('show');
+            } else {
+                Swal.fire({title: "Ooops!", text: data.message, icon: "warning", allowOutsideClick: false});
+            }
+        }, error: function (jqXHR, textStatus, errorThrown) {
+            blockUi.release(), blockUi.destroy();
+            console.log("load data is error!");
+            Swal.fire({
+                title: "Ooops!",
+                text: "Terjadi kesalahan yang tidak diketahui, Periksa koneksi jaringan internet lalu coba kembali. Mohon hubungi pengembang jika masih mengalami masalah yang sama.",
+                icon: "error",
+                allowOutsideClick: false,
+            });
+        },
     });
 }
 // cetak barcode
