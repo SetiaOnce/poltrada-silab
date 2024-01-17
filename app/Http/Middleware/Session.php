@@ -16,10 +16,10 @@ class Session
      */
     public function handle(Request $request, Closure $next)
     {
-		if(!$_COOKIE["pegawai_token"]) { 
-			return redirect('/'); 
-		}else{
-            return $next($request);
-		}
+      if(isset($_COOKIE['pegawai_token']) && $_COOKIE['pegawai_token']) { 
+        return $next($request);
+      }else{
+        return redirect('/'); 
+      }
     }
 }
