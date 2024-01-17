@@ -46,6 +46,7 @@ const _loadDataAlatPeraga = () => {
             { data: 'jumlah', name: 'jumlah'},
             { data: 'satuan', name: 'satuan'},
             { data: 'perawatan', name: 'perawatan'},
+            { data: 'pemeriksaan', name: 'pemeriksaan'},
             { data: 'foto', name: 'foto'},
             { data: 'action', name: 'action'},
         ],
@@ -59,7 +60,8 @@ const _loadDataAlatPeraga = () => {
             { "width": "10%", "targets": 5, "className": "align-top text-center", searchable:false, orderable:false},
             { "width": "10%", "targets": 6, "className": "align-top text-center", searchable:false, orderable:false},
             { "width": "10%", "targets": 7, "className": "align-top text-center", searchable:false, orderable:false},
-            { "width": "10%", "targets": 8, "className": "text-center", searchable:false, orderable:false},
+            { "width": "10%", "targets": 8, "className": "align-top text-center", searchable:false, orderable:false},
+            { "width": "10%", "targets": 9, "className": "text-center", searchable:false, orderable:false},
         ],
         oLanguage: {
             sEmptyTable: "Tidak ada Data yang dapat ditampilkan..",
@@ -107,7 +109,7 @@ const _loadDataAlatPeraga = () => {
 			}).data().each(function (group, i) {
 				if (last !== group) {
 					$(rows).eq(i).before(
-						'<tr class="align-middle "><td class="bg-secondary" colspan="8"><b><i class="mdi mdi-animation mr-2"></i> ' + group + '</b></td></tr>'
+						'<tr class="align-middle "><td class="bg-secondary" colspan="9"><b><i class="mdi mdi-animation mr-2"></i> ' + group + '</b></td></tr>'
 					);
 					last = group;
 				}
@@ -553,7 +555,7 @@ const _detailPerawatan = (idp) => {
         success: function (data) {
             blockUi.release(), blockUi.destroy();
             if (data.status == true) {
-                $('#modalDetailPerawatan .modal-body').html(`
+                $('#modalDetail .modal-body').html(`
                     <div class="row">
                         <table class="table table-rounded table-row-bordered border">
                             <tbody>
@@ -568,8 +570,8 @@ const _detailPerawatan = (idp) => {
                                 <tr>
                                     <td style="width: 50px">Foto</td>
                                     <td style="width: 200px">
-                                        <a href="`+data.row.foto_url+`" target="_blank" class="symbol symbol-70px me-2" data-kt-initialized="1">
-                                            <img src="`+data.row.foto_url+`" alt="`+data.row.foto+`">
+                                        <a href="`+data.row.foto_url+`" target="_blank" class=" me-2" data-kt-initialized="1">
+                                            <img src="`+data.row.foto_url+`" alt="`+data.row.foto+`" width="50%">
                                         </a>
                                     </td>
                                 </tr>
@@ -577,8 +579,65 @@ const _detailPerawatan = (idp) => {
                         </table>
                     </div>
                 `);
-                $('#modalDetailPerawatan .modal-title').html('<h3 class="fw-bolder fs-4 text-gray-900"><i class="fas fa-th-list fs-2 text-gray-900 me-2"></i>Detail Perawatan Alat Peraga</h3>');
-                $('#modalDetailPerawatan').modal('show');
+                $('#modalDetail .modal-title').html('<h3 class="fw-bolder fs-4 text-gray-900"><i class="fas fa-th-list fs-2 text-gray-900 me-2"></i>Detail Perawatan Alat Peraga</h3>');
+                $('#modalDetail').modal('show');
+            } else {
+                Swal.fire({title: "Ooops!", text: data.message, icon: "warning", allowOutsideClick: false});
+            }
+        }, error: function (jqXHR, textStatus, errorThrown) {
+            blockUi.release(), blockUi.destroy();
+            console.log("load data is error!");
+            Swal.fire({
+                title: "Ooops!",
+                text: "Terjadi kesalahan yang tidak diketahui, Periksa koneksi jaringan internet lalu coba kembali. Mohon hubungi pengembang jika masih mengalami masalah yang sama.",
+                icon: "error",
+                allowOutsideClick: false,
+            });
+        },
+    });
+}
+// detail pemeriksaan
+const _detailPemeriksaan = (idp) => {
+    let target = document.querySelector("#card-data"), blockUi = new KTBlockUI(target, { message: messageBlockUi });
+    blockUi.block(), blockUi.destroy();
+    //Ajax load from ajax
+    $.ajax({
+        url: BASE_URL+ '/app_admin/ajax/load_detail_pemeriksaan',
+        headers: { 'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content') },
+        type: 'GET',
+        dataType: 'JSON',
+        data: {
+            idp,
+        },
+        success: function (data) {
+            blockUi.release(), blockUi.destroy();
+            if (data.status == true) {
+                $('#modalDetail .modal-body').html(`
+                    <div class="row">
+                        <table class="table table-rounded table-row-bordered border">
+                            <tbody>
+                                <tr>
+                                    <td style="width: 50px">Tanggal Pemeriksaan</td>
+                                    <td style="width: 200px">`+data.row.tgl_pemeriksaan+`</td>
+                                </tr>
+                                <tr>
+                                    <td style="width: 50px">Keterangan</td>
+                                    <td style="width: 200px">`+data.row.keterangan+`</td>
+                                </tr>
+                                <tr>
+                                    <td style="width: 50px">Foto</td>
+                                    <td style="width: 200px">
+                                        <a href="`+data.row.foto_url+`" target="_blank" class=" me-2" data-kt-initialized="1">
+                                            <img src="`+data.row.foto_url+`" alt="`+data.row.foto+`" width="50%">
+                                        </a>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                `);
+                $('#modalDetail .modal-title').html('<h3 class="fw-bolder fs-4 text-gray-900"><i class="fas fa-th-list fs-2 text-gray-900 me-2"></i>Detail Pemeriksaan Alat Peraga</h3>');
+                $('#modalDetail').modal('show');
             } else {
                 Swal.fire({title: "Ooops!", text: data.message, icon: "warning", allowOutsideClick: false});
             }

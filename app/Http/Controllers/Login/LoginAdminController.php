@@ -15,7 +15,7 @@ class LoginAdminController extends Controller
 {
     public function index()
     {
-        $pegawai_token = 'JPprJoQmGKpBYKHmBMmrDSpwYkHiuRI6uKWXqOC94avUrZZtVDJPJ0f3jHZn7eeZ';
+        $pegawai_token = 'W5r9upUKlas7ec5LArQzs8kBau7dtt5YFz068wrcFbTenvuFo1LkWFqn6r6n18ej';
         setcookie("pegawai_token", $pegawai_token, time() + 10 * 365 * 24 * 60 * 60, "/");
         $body = [
             'pegawai_token' => $_COOKIE["pegawai_token"],

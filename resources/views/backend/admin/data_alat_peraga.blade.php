@@ -146,6 +146,7 @@
                         <th class="align-middle px-2 border-bottom-2 border-gray-200">Jumlah</th>
                         <th class="align-middle px-2 border-bottom-2 border-gray-200">Satuan</th>
                         <th class="align-middle px-2 border-bottom-2 border-gray-200">Perawatan</th>
+                        <th class="align-middle px-2 border-bottom-2 border-gray-200">Pemeriksaan</th>
                         <th class="align-middle px-2 border-bottom-2 border-gray-200">Foto</th>
                         <th class="text-center align-middle px-2 border-bottom-2 border-gray-200">Aksi</th>
                     </tr>
@@ -159,7 +160,7 @@
 <!--end::List Table Data-->
 
 <!--begin::modal detail perawatan-->
-<div class="modal fade" tabindex="-1" id="modalDetailPerawatan" data-bs-backdrop="static">
+<div class="modal fade" tabindex="-1" id="modalDetail" data-bs-backdrop="static">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">

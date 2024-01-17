@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Backend\Admin;
 use App\Helpers\Shortcut;
 use App\Http\Controllers\Controller;
 use App\Models\DataAlatPeraga;
+use App\Models\PemeriksaanAlat;
 use App\Models\PerawatanAlat;
 use App\Models\ProfileApp;
 use Illuminate\Http\Request;
@@ -44,6 +45,15 @@ class DataAlatPeragaController extends Controller
                 }
                 return $output;
             })
+            ->editColumn('pemeriksaan', function ($row) {
+                $getRow = PemeriksaanAlat::whereFidAlatPeraga($row->id)->orderByDesc('tgl_pemeriksaan')->first();
+                if(!empty($getRow)){
+                    $output = '<span class="badge badge-primary cursor-pointer" data-bs-toggle="tooltip" title="Klik untuk melihat detail!" onclick="_detailPemeriksaan('."'".$getRow->id."'".');">'.date('d-m-Y', strtotime($getRow->tgl_pemeriksaan)).'</span>';
+                }else{
+                    $output = '<span class="badge badge-light"><i>Tidak Ada Pemeriksaan</i></span>';
+                }
+                return $output;
+            })
             ->editColumn('foto', function ($row) {
                 $file_image = $row->foto;
                 if($file_image==''){
@@ -69,7 +79,7 @@ class DataAlatPeragaController extends Controller
                 $btn = $btn.'<a href="javascript:void(0);"class="btn btn-icon btn-sm btn-info mb-1 ms-1" data-bs-toggle="tooltip" title="Cetak barcode!" onclick="_cetakBarcode('."'".$row->id."'".');"><i class="bi bi-upc-scan"></i></a>';
                 return $btn;
             })
-            ->rawColumns(['laboratorium','nama_alat_peraga', 'foto', 'satuan', 'perawatan', 'status', 'action'])
+            ->rawColumns(['laboratorium','nama_alat_peraga', 'foto', 'satuan', 'perawatan', 'pemeriksaan', 'status', 'action'])
             ->make(true);
     }
     public function store(Request $request)
@@ -233,6 +243,16 @@ class DataAlatPeragaController extends Controller
         $getRow = PerawatanAlat::where('id', $request->idp)->first();
         $getRow->foto_url = asset('dist/img/perawatan/'.$getRow->foto);
         $getRow->tgl_perawatan = date('d/m/Y', strtotime($getRow->tgl_perawatan)); 
+        return response()->json([
+            'status' => TRUE,
+            'row' =>$getRow,
+        ]);
+    }
+    public function detaiPemeriksaan(Request $request)
+    {
+        $getRow = PemeriksaanAlat::where('id', $request->idp)->first();
+        $getRow->foto_url = asset('dist/img/pemeriksaan/'.$getRow->foto);
+        $getRow->tgl_pemeriksaan = date('d/m/Y', strtotime($getRow->tgl_pemeriksaan)); 
         return response()->json([
             'status' => TRUE,
             'row' =>$getRow,
