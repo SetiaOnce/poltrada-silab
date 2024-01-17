@@ -392,7 +392,7 @@ class FrontendController extends Controller
     }
     public function alatPinjaman(Request $request)
     {
-        $query = DataAlatPeraga::whereFidLab($request->idp_lab)->orderBy('id', 'DESC');
+        $query = DataAlatPeraga::whereFidLab($request->idp_lab)->whereNot('jumlah', 0)->orderBy('id', 'DESC');
         $data = $query->get();
 
         $output = '';
@@ -450,9 +450,7 @@ class FrontendController extends Controller
         $outputAlatPinjaman .= '';
         foreach($dtAlatPeraga as $row){
             // check if exist on detail peminjaman
-            $check = DetailPinjaman::whereFidPeminjaman($fidHeaderPinjaman)->whereFidAlatPeraga($row->id)->first();
             $value = 1;
-            if (!empty($check)) {$value = $check->jumlah;}
 
             $outputAlatPinjaman .= '
                 <tr>
@@ -514,5 +512,94 @@ class FrontendController extends Controller
         ];
         $output = array('status' => TRUE, 'row' => $data);
         return response()->json($output);
+    }
+
+    public function checkLogin()
+    {
+        if(isset($_COOKIE['pegawai_token']) && $_COOKIE['pegawai_token']) { 
+            return response()->json(['status' => true]);
+        }else{
+            return response()->json(['status' => false]);
+        }
+    }
+    public function savePemeriksaanPerawatan(Request $request)
+    {
+        date_default_timezone_set("Asia/Makassar");
+        $errors					= [];
+        if($request->type_action == 'PERAWATAN'){
+            $validator = Validator::make($request->all(), [
+                'fid_alat_peraga' => 'required',
+                'tgl_perawatan' => 'required',
+                'foto_perawatan' => 'required|mimes:png,jpg,jpeg|max:2048',
+                'keterangan_perawatan' => 'required|max:250',
+            ],[
+                'fid_alat_peraga.required' => 'Alat peraga masih kosong.',
+                'tgl_perawatan.required' => 'Tanggal perawatan masih kosong.',     
+                'foto_perawatan.max' => 'Foto tidak lebih dari 2MB.',
+                'foto_perawatan.mimes' => 'Foto berekstensi jpg jepg png.',
+                'keterangan_perawatan.required' => 'Keterangan masih kosong.',
+                'keterangan_perawatan.max' => 'Keterangan tidak lebih dari 250 karakter.',
+            ]);
+            if($validator->fails()){
+                foreach ($validator->errors()->getMessages() as $item) {
+                    $errors[] = $item;
+                }
+                $output = array("status" => FALSE, "pesan_code" => 'format_inputan', "pesan_error" => $errors);
+            } else {
+                // save image to directory
+                $mainImage = $request->file('foto_perawatan');
+                $ImageName = md5(Shortcut::random_strings(15)). '-perawatan.' . $mainImage->extension();
+                Image::make($mainImage)->save(public_path('dist/img/perawatan/'.$ImageName));
+                $tanggalPerawatan=Carbon::createFromFormat('d/m/Y', $request->input('tgl_perawatan'))->format('Y-m-d'); 
+                PerawatanAlat::create([
+                    'fid_alat_peraga' => $request->input('fid_alat_peraga'),
+                    'tgl_perawatan' => $tanggalPerawatan,
+                    'foto' => $ImageName,
+                    'keterangan' => $request->input('keterangan_perawatan'),
+                    'user_add' => session()->get('nama'),
+                    'created_at' => Carbon::now()
+                ]);
+                $output = array("status" => TRUE, 'message' => 'Berhasil menyimpan data perawatan...');
+            }
+            return response()->json($output);
+        }else{
+            $validator = Validator::make($request->all(), [
+                'fid_alat_peraga' => 'required',
+                'tgl_pemeriksaan' => 'required',
+                'foto_pemeriksaan' => 'required|mimes:png,jpg,jpeg|max:2048',
+                'keterangan_pemeriksaan' => 'required|max:250',
+            ],[
+                'fid_alat_peraga.required' => 'Alat peraga masih kosong.',
+                'tgl_pemeriksaan.required' => 'Tanggal pemeriksaan masih kosong.',     
+                'foto_pemeriksaan.max' => 'Foto tidak lebih dari 2MB.',
+                'foto_pemeriksaan.mimes' => 'Foto berekstensi jpg jepg png.',
+                'keterangan_pemeriksaan.required' => 'Keterangan masih kosong.',
+                'keterangan_pemeriksaan.max' => 'Keterangan tidak lebih dari 250 karakter.',
+            ]);
+        
+            if($validator->fails()){
+                foreach ($validator->errors()->getMessages() as $item) {
+                    $errors[] = $item;
+                }
+                $output = array("status" => FALSE, "pesan_code" => 'format_inputan', "pesan_error" => $errors);
+            } else {
+                // save image to directory
+                $mainImage = $request->file('foto_pemeriksaan');
+                $ImageName = md5(Shortcut::random_strings(15)). '-pemeriksaan.' . $mainImage->extension();
+                Image::make($mainImage)->save(public_path('dist/img/pemeriksaan/'.$ImageName));
+                $tanggalPemeriksaan=Carbon::createFromFormat('d/m/Y', $request->input('tgl_pemeriksaan'))->format('Y-m-d'); 
+    
+                PemeriksaanAlat::create([
+                    'fid_alat_peraga' => $request->input('fid_alat_peraga'),
+                    'tgl_pemeriksaan' => $tanggalPemeriksaan,
+                    'foto' => $ImageName,
+                    'keterangan' => $request->input('keterangan_pemeriksaan'),
+                    'user_add' => session()->get('nama'),
+                    'created_at' => Carbon::now()
+                ]);
+                $output = array("status" => TRUE, 'message' => 'Berhasil menyimpan data pemeriksaan...');
+            }
+            return response()->json($output);
+        }
     }
 }

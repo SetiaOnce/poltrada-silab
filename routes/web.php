@@ -44,6 +44,8 @@ Route::controller(FrontendController::class)->group(function(){
     Route::post('/ajax/load_alat_pinjaman', 'alatPinjaman');
     Route::post('/ajax/check_alat_approve', 'checkApproveAlat');
     Route::post('/ajax/alat_pinjaman_save', 'alatPinjamanSave');
+    Route::get('/ajax/check_login', 'checkLogin');
+    Route::post('/ajax/save_pemeriksaan_perawatan', 'savePemeriksaanPerawatan');
 });
 
 Route::controller(InformasiController::class)->group(function(){

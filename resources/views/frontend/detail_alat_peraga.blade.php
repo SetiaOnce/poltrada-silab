@@ -1,8 +1,14 @@
 @extends('frontend.layouts', ['activeMenu' => 'VIEW_DETIL_ALAT', 'activeSubMenu' => '', 'title' => 'Detail Alat Peraga'])
 @section('content')
-
-
-<div class="card mt-5">     
+@section('css')
+<link href="{{ asset('/dist/plugins/bootstrap-select/css/bootstrap-select.min.css') }}" rel="stylesheet" type="text/css" /> 
+<link href="{{ asset('/dist/plugins/custom/datatables/datatables.bundle.v817.css') }}" rel="stylesheet" type="text/css" /> 
+<link href="{{ asset('/dist/plugins/summernote/summernote-lite.min.css') }}" rel="stylesheet" type="text/css" />  
+<link href="{{ asset('/dist/plugins/dropify-master/css/dropify.min.css') }}" rel="stylesheet" type="text/css" /> 
+<link href="{{ asset('/dist/plugins/Magnific-Popup/magnific-popup.css') }}" rel="stylesheet" type="text/css" /> 
+<link href="{{ asset('/dist/plugins/bootstrap-datepicker/css/bootstrap-datepicker.min.css') }}" rel="stylesheet" type="text/css"/>
+@stop
+<div class="card mt-5" id="card-alat">     
     <!--begin::Body-->
     <div class="card-body p-lg-20 pb-lg-0">
         <!--begin::Layout-->
@@ -160,7 +166,7 @@
                                     <th  class="align-middle px-2 border-bottom-2 border-gray-200">Foto</th>
                                 </tr>
                             </thead>
-                            <tbody>
+                            <tbody class="fs-8">
                                 @foreach ($dtPerawatan as $no => $perawatan)             
                                 @php
                                     $file_image = $perawatan->foto;
@@ -176,11 +182,11 @@
                                     }
                                 @endphp
                                 <tr>
-                                    <td align="center">{{ $no+1 }}</td>
-                                    <td>{{ date('d-m-Y', strtotime($perawatan->tgl_perawatan)) }}</td>
-                                    <td>{{ $perawatan->keterangan }}</td>
-                                    <td align="center">
-                                        <a class="d-block overlay w-100 image-popup" href="javascript:void(0);" title="{{ $file_image }}">
+                                    <td align="center" width="10">{{ $no+1 }}</td>
+                                    <td width="20">{{ date('d-m-Y', strtotime($perawatan->tgl_perawatan)) }}</td>
+                                    <td width="35">{{ $perawatan->keterangan }}</td>
+                                    <td align="center" width="35">
+                                        <a class="d-block overlay w-100 image-popup" href="{{ $url_file }}" title="{{ $file_image }}">
                                             <img src="{{ $url_file }}" class="overlay-wrapper bgi-no-repeat bgi-position-center bgi-size-cover rounded w-100" alt="{{ $file_image }}" />
                                             <div class="overlay-layer card-rounded bg-dark bg-opacity-25">
                                                 <span class="badge badge-dark"><i class="las la-search fs-3 text-light"></i></span>
@@ -209,7 +215,7 @@
                                     <th  class="align-middle px-2 border-bottom-2 border-gray-200">Foto</th>
                                 </tr>
                             </thead>
-                            <tbody>
+                            <tbody class="fs-8">
                                 @foreach ($dtPemeriksaan as $no => $pemeriksaan)             
                                 @php
                                     $file_image = $pemeriksaan->foto;
@@ -225,11 +231,11 @@
                                     }
                                 @endphp
                                 <tr>
-                                    <td align="center">{{ $no+1 }}</td>
-                                    <td>{{ date('d-m-Y', strtotime($pemeriksaan->tgl_pemeriksaan)) }}</td>
-                                    <td>{{ $pemeriksaan->keterangan }}</td>
-                                    <td align="center">
-                                        <a class="d-block overlay w-100 image-popup" href="javascript:void(0);" title="{{ $file_image }}">
+                                    <td align="center" width="10">{{ $no+1 }}</td>
+                                    <td width="20">{{ date('d-m-Y', strtotime($pemeriksaan->tgl_pemeriksaan)) }}</td>
+                                    <td width="35">{{ $pemeriksaan->keterangan }}</td>
+                                    <td align="center" width="35">
+                                        <a class="d-block overlay w-100 image-popup" href="{{ $url_file }}" title="{{ $file_image }}">
                                             <img src="{{ $url_file }}" class="overlay-wrapper bgi-no-repeat bgi-position-center bgi-size-cover rounded w-100" alt="{{ $file_image }}" />
                                             <div class="overlay-layer card-rounded bg-dark bg-opacity-25">
                                                 <span class="badge badge-dark"><i class="las la-search fs-3 text-light"></i></span>
@@ -243,9 +249,9 @@
                     </div>
                 </div>
                 <span class="text-danger fs-8 text-justify border rounded p-5">*Pastikan kamu sudah melakukan login pada aplikasi ini, jika ingin melakukan penginputan terhadap perawatan dan pemeriksaan alat peraga</span>
-                <div class="justify-content-center text-center mt-4">
-                    <a href="{{ url('app_admin/alat_peraga/perawatan') }}" class="btn btn-sm btn btn-primary mb-2"><i class="fas fa-times"></i> Perawatan Alat Peraga</a>
-                    <a href="{{ url('app_admin/alat_peraga/pemeriksaan') }}" class="btn btn-sm btn btn-info mb-2"><i class="fas fa-times"></i> Pemeriksaan Alat Peraga</a>
+                <div class="justify-content-center text-center mt-4 p-4">
+                    <a href="javascript:void(0);" onclick="_checkLogin('PERAWATAN', '{{ $alat->id }}')" class="btn btn-sm btn btn-primary mb-2"><i class="bi bi-pencil-square"></i> Perawatan Alat Peraga</a>
+                    <a href="javascript:void(0);" onclick="_checkLogin('PEMERIKSAAN', '{{ $alat->id }}')" class="btn btn-sm btn btn-info mb-2"><i class="bi bi-pencil-square"></i> Pemeriksaan Alat Peraga</a>
                 </div>
             </div>  
             <!--end::Content-->
@@ -255,8 +261,110 @@
     <!--end::Body-->
 </div>
 
-
+<!--begin::modal-->
+<div class="modal fade" tabindex="-1" id="modalAction" data-bs-backdrop="static">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title"></h3>
+                <!--begin::Close-->
+                <div class="btn btn-icon btn-sm btn-active-light-primary ms-2" data-bs-dismiss="modal" aria-label="Close">
+                    <i class="bi bi-x-lg fs-1"></i>
+                </div>
+                <!--end::Close-->
+            </div>
+            <div class="modal-body">
+                <!--begin::Form-->
+                <form class="form" autocomplete="off" id="form-perawatan" onsubmit="false" style="display: none;">
+                    <input type="hidden" name="fid_alat_peraga"><input type="hidden" name="type_action">
+                    <!--begin::Card body-->
+                    <div class="card-body">
+                        <!--begin::Row-->
+                        <div class="row justify-content-center">
+                            <div class="col-lg-10 col-md-10 col-sm-12">
+                                <!--begin::Input group-->
+                                <div class="form-group mb-5">
+                                    <label class="col-form-label required fs-6" for="tgl_perawatan">Tanggal Perawatan</label>
+                                    <input type="text" name="tgl_perawatan" id="tgl_perawatan" class="form-control mb-3 mb-lg-0 dateString" maxlength="250" placeholder="Isikan tanggal perawatan ..." value="{{ date('d/m/Y') }}"/>
+                                    <div class="form-text">*) Input: <code>dd/mm/yy</code> </div>
+                                </div>
+                                <!--begin::Input group-->
+                                <!--begin::Input group-->
+                                <div class="row mb-6" id="iGroup-fotoPerawatan">
+                                    <label class="col-form-label required fw-bold fs-6">Foto Perawatan</label>
+                                    <input type="file" class="dropify-upl mb-3 mb-lg-0" id="foto_perawatan" name="foto_perawatan" accept=".png, .jpg, .jpeg" data-show-remove="false" data-allowed-file-extensions="jpg png jpeg" data-max-file-size="2M" />
+                                    <div class="form-text">*) Type file: <code>*.jpeg | *.jpeg | *.png</code></div>
+                                    <div class="form-text">*) Max. size file: <code>2MB</code></div>
+                                </div>
+                                <!--end::Input group-->
+                                <!--begin::Input group-->
+                                <div class="form-group mt-4">
+                                    <label class="col-form-label required fs-6" for="keterangan_perawatan">Keterangan</label>
+                                    <textarea name="keterangan_perawatan" id="keterangan_perawatan" rows="3" class="form-control form-control-lg  mb-3 mb-lg-0" placeholder="Isikan keterangan...."></textarea>
+                                    <div class="form-text">*) Maksimal: <code>250</code> Karakter | Isi dengan: <code>(-)</code> jika tidak ada</div>
+                                </div>
+                                <!--end::Input group-->
+                            </div>
+                        </div>
+                        <!--end::Row-->
+                    </div>
+                    <!--end::Card body-->
+                </form>
+                <!--end::Form-->
+                <!--begin::Form-->
+                <form class="form" autocomplete="off" id="form-pemeriksaan" onsubmit="false" style="display: none;">
+                    <input type="hidden" name="fid_alat_peraga"><input type="hidden" name="type_action">
+                    <!--begin::Card body-->
+                    <div class="card-body">
+                        <!--begin::Row-->
+                        <div class="row justify-content-center">
+                            <div class="col-lg-10 col-md-10 col-sm-12">
+                                <!--begin::Input group-->
+                                <div class="form-group mb-5">
+                                    <label class="col-form-label required fs-6" for="tgl_pemeriksaan">Tanggal Pemeriksaan</label>
+                                    <input type="text" name="tgl_pemeriksaan" id="tgl_pemeriksaan" class="form-control mb-3 mb-lg-0 dateString" maxlength="250" placeholder="Isikan tanggal pemeriksaan ..." value="{{ date('d/m/Y') }}"/>
+                                    <div class="form-text">*) Input: <code>dd/mm/yy</code> </div>
+                                </div>
+                                <!--begin::Input group-->
+                                <!--begin::Input group-->
+                                <div class="row mb-6" id="iGroup-fotoPemeriksaan">
+                                    <label class="col-form-label required fw-bold fs-6">Foto Pemeriksaan</label>
+                                    <input type="file" class="dropify-upl mb-3 mb-lg-0" id="foto_pemeriksaan" name="foto_pemeriksaan" accept=".png, .jpg, .jpeg" data-show-remove="false" data-allowed-file-extensions="jpg png jpeg" data-max-file-size="2M" />
+                                    <div class="form-text">*) Type file: <code>*.jpeg | *.jpeg | *.png</code></div>
+                                    <div class="form-text">*) Max. size file: <code>2MB</code></div>
+                                </div>
+                                <!--end::Input group-->
+                                <!--begin::Input group-->
+                                <div class="form-group mt-4">
+                                    <label class="col-form-label required fs-6" for="keterangan_pemeriksaan">Keterangan</label>
+                                    <textarea name="keterangan_pemeriksaan" id="keterangan_pemeriksaan" rows="3" class="form-control form-control-lg  mb-3 mb-lg-0" placeholder="Isikan keterangan...."></textarea>
+                                    <div class="form-text">*) Maksimal: <code>250</code> Karakter | Isi dengan: <code>(-)</code> jika tidak ada</div>
+                                </div>
+                                <!--end::Input group-->
+                            </div>
+                        </div>
+                        <!--end::Row-->
+                    </div>
+                    <!--end::Card body-->
+                </form>
+                <!--end::Form-->
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="btn-save" class="btn btn-sm btn-primary me-2"><i class="far fa-save"></i> Simpan</button>
+                <button type="button" class="btn btn-sm btn-danger" data-bs-dismiss="modal"><i class="fas fa-times align-middle me-1"></i> Tutup</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!--end::modal-->
 @section('js')
-<script src="{{ asset('/script/frontend/main.js') }}"></script>
+<script src="{{ asset('/dist/plugins/bootstrap-select/js/bootstrap-select.min.js') }}"></script>
+<script src="{{ asset('/dist/plugins/custom/datatables/datatables.bundle.v817.js') }}"></script>
+<script src="{{ asset('/dist/plugins/summernote/summernote-lite.min.js') }}"></script>
+<script src="{{ asset('/dist/plugins/summernote/lang/summernote-id-ID.min.js') }}"></script>
+<script src="{{ asset('/dist/plugins/Magnific-Popup/jquery.magnific-popup.min.js') }}"></script>
+<script src="{{ asset('/dist/plugins/dropify-master/js/dropify.min.js') }}"></script>
+<script src="{{ asset('/dist/plugins/bootstrap-datepicker/js/bootstrap-datepicker.min.js') }}"></script>
+<script src="{{ asset('/script/frontend/detail_alat_peraga.js') }}"></script>
 @stop
 @endsection

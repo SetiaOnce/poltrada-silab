@@ -558,8 +558,12 @@ $('#btn-approve-alat').click(function(){
                 $('[name="fid_peminjaman"]').val(fid_header_pinjaman);
                 
                 $('#dt-approveAlat').html(data.outputAlatPinjaman);
-                $('.inputmax6').mask('0000000000');
-
+                $(".inputmax6").inputmask({
+                    regex: "^[1-9][0-9]*$",
+                    placeholder: "",
+                    showMaskOnFocus: false,
+                    showMaskOnHover: false
+                });
                 $('#modalApproveAlat .modal-title').html('<h3 class="fw-bolder fs-3 text-gray-900"><i class="bi bi-cart-plus fs-2 text-gray-900 me-2"></i> Tentukan jumlah alat praktek yang ingin dipinjam (<span class="text-info">'+ data.jmlhAlat +'</span>)</h3>');
                 $('#modalApproveAlat').modal('show');
             }, error: function (jqXHR, textStatus, errorThrown) {
