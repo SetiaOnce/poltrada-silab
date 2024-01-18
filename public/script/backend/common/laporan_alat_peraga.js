@@ -27,9 +27,9 @@ const _loadDataAlatPeraga = () => {
                 }
             }
         ],
-        searchDelay: 300,
+        // searchDelay: 300,
         processing: true,
-        serverSide: true,
+        serverSide: false,
         ajax: {
             "url" : BASE_URL+ "/app_admin/ajax/load_laporan_alat_peraga",
             'headers': { 'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content') },
@@ -53,6 +53,8 @@ const _loadDataAlatPeraga = () => {
             { data: 'kode_alat_peraga', name: 'kode_alat_peraga'},
             { data: 'nama_alat_peraga', name: 'nama_alat_peraga'},
             { data: 'jumlah', name: 'jumlah'},
+            { data: 'dipinjam', name: 'dipinjam'},
+            { data: 'tersedia', name: 'tersedia'},
             { data: 'satuan', name: 'satuan'},
             { data: 'foto', name: 'foto'},
             { data: 'detail', name: 'detail'},
@@ -65,8 +67,10 @@ const _loadDataAlatPeraga = () => {
             { "width": "30%", "targets": 3, "className": "align-top" },
             { "width": "10%", "targets": 4, "className": "align-top text-center" },
             { "width": "10%", "targets": 5, "className": "align-top text-center", searchable:false, orderable:false},
-            { "width": "10%", "targets": 6, "className": "text-center", searchable:false, orderable:false},
-            { "width": "10%", "targets": 7, "className": "text-center", searchable:false, orderable:false},
+            { "width": "10%", "targets": 6, "className": "align-top text-center", searchable:false, orderable:false},
+            { "width": "10%", "targets": 7, "className": "align-top text-center", searchable:false, orderable:false},
+            { "width": "10%", "targets": 8, "className": "text-center", searchable:false, orderable:false},
+            { "width": "10%", "targets": 9, "className": "text-center", searchable:false, orderable:false},
         ],
         oLanguage: {
             sEmptyTable: "Tidak ada Data yang dapat ditampilkan..",
@@ -114,7 +118,7 @@ const _loadDataAlatPeraga = () => {
 			}).data().each(function (group, i) {
 				if (last !== group) {
 					$(rows).eq(i).before(
-						'<tr class="align-middle "><td class="bg-secondary" colspan="8"><b><i class="mdi mdi-animation mr-2"></i> ' + group + '</b></td></tr>'
+						'<tr class="align-middle "><td class="bg-secondary" colspan="10"><b><i class="mdi mdi-animation mr-2"></i> ' + group + '</b></td></tr>'
 					);
 					last = group;
 				}

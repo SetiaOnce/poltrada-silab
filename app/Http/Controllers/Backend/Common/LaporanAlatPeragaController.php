@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Backend\Common;
 use App\Helpers\Shortcut;
 use App\Http\Controllers\Controller;
 use App\Models\DataAlatPeraga;
+use App\Models\DetailPinjaman;
 use App\Models\PemeriksaanAlat;
 use App\Models\PerawatanAlat;
 use Illuminate\Http\Request;
@@ -59,14 +60,35 @@ class LaporanAlatPeragaController extends Controller
             ->addColumn('satuan', function($row){
                 return $row->satuan->satuan;
             })
+            ->addColumn('dipinjam', function($row){
+                $result = DetailPinjaman::join('silab_peminjaman', 'silab_detail_peminjaman.fid_peminjaman', '=', 'silab_peminjaman.id')
+                    ->join('silab_data_alat_peraga', 'silab_detail_peminjaman.fid_alat_peraga', '=', 'silab_data_alat_peraga.id')
+                    ->where('silab_peminjaman.status', 1)
+                    ->where('silab_detail_peminjaman.fid_alat_peraga', $row->id)
+                    ->sum('silab_detail_peminjaman.jumlah');
+                return $result;
+            })
+            ->addColumn('tersedia', function($row){
+                $dipinjam = DetailPinjaman::join('silab_peminjaman', 'silab_detail_peminjaman.fid_peminjaman', '=', 'silab_peminjaman.id')
+                ->join('silab_data_alat_peraga', 'silab_detail_peminjaman.fid_alat_peraga', '=', 'silab_data_alat_peraga.id')
+                ->where('silab_peminjaman.status', 1)
+                ->where('silab_detail_peminjaman.fid_alat_peraga', $row->id)
+                ->sum('silab_detail_peminjaman.jumlah');
+                return $row->jumlah - $dipinjam;
+            })
             ->addColumn('detail', function($row){
                 return '<button type="button" data-bs-toggle="tooltip" title="Lihat detail alat peraga!" onclick="_detailAlatPeraga('.$row->id.')" class="btn btn-icon btn-sm btn-success me-2"><i class="fas fa-th-list fs-3"></i></button>';
             })
-            ->rawColumns(['laboratorium','nama_alat_peraga', 'foto', 'satuan', 'detail'])
+            ->rawColumns(['laboratorium','nama_alat_peraga', 'foto', 'satuan', 'dipinjam', 'tersedia', 'detail'])
             ->make(true);
     }
     protected function detailInformasiAlat($alatPeraga)
     {
+        $dipinjam = DetailPinjaman::join('silab_peminjaman', 'silab_detail_peminjaman.fid_peminjaman', '=', 'silab_peminjaman.id')
+        ->join('silab_data_alat_peraga', 'silab_detail_peminjaman.fid_alat_peraga', '=', 'silab_data_alat_peraga.id')
+        ->where('silab_peminjaman.status', 1)
+        ->where('silab_detail_peminjaman.fid_alat_peraga', $alatPeraga->id)
+        ->sum('silab_detail_peminjaman.jumlah');
         $output = '
             <!--begin::Title-->
             <h3 class="text-gray-900 fw-bolder mb-3">
@@ -91,6 +113,14 @@ class LaporanAlatPeragaController extends Controller
                         <tr>
                             <td style="width: 30px">Jumlah</td>
                             <td style="width: 400px">'.$alatPeraga->jumlah.'</td>
+                        </tr>
+                        <tr>
+                            <td style="width: 30px">Dipinjam</td>
+                            <td style="width: 400px">'.$dipinjam.'</td>
+                        </tr>
+                        <tr>
+                            <td style="width: 30px">Tersedia</td>
+                            <td style="width: 400px">'.$alatPeraga->jumlah - $dipinjam.'</td>
                         </tr>
                         <tr>
                             <td style="width: 30px">Satuan</td>

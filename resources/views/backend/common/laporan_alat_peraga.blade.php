@@ -1,13 +1,11 @@
 @extends('backend.layouts', ['activeMenu' => 'LAPORAN_ALAT_PERAGA', 'activeSubMenu' => 'laporan', 'title' => 'Laporan Alat Peraga'])
 @section('content')
-
 @section('css')
 <link href="{{ asset('/dist/plugins/bootstrap-select/css/bootstrap-select.min.css') }}" rel="stylesheet" type="text/css" /> 
 <link href="{{ asset('/dist/plugins/custom/datatables/datatables.bundle.v817.css') }}" rel="stylesheet" type="text/css" /> 
 <link href="{{ asset('/dist/plugins/summernote/summernote-lite.min.css') }}" rel="stylesheet" type="text/css" />  
 <link href="{{ asset('/dist/plugins/bootstrap-datepicker/css/bootstrap-datepicker.min.css') }}" rel="stylesheet" type="text/css" />
 @stop
-
 <!--begin::List Table Data-->
 <div class="card shadow" id="card-data">
     <!--begin::Card header-->
@@ -116,6 +114,8 @@
                         <th class="align-middle px-2 border-bottom-2 border-gray-200">Kode Alat</th>
                         <th class="align-middle px-2 border-bottom-2 border-gray-200">Nama Alat</th>
                         <th class="align-middle px-2 border-bottom-2 border-gray-200">Jumlah</th>
+                        <th class="align-middle px-2 border-bottom-2 border-gray-200">Dipinjam</th>
+                        <th class="align-middle px-2 border-bottom-2 border-gray-200">Tersedia</th>
                         <th class="text-center align-middle px-2 border-bottom-2">Satuan</th>
                         <th class="align-middle px-2 border-bottom-2 border-gray-200">Foto</th>
                         <th class="align-middle px-2 border-bottom-2 border-gray-200">Detail</th>
@@ -128,7 +128,6 @@
     </div>
 </div>
 <!--end::List Table Data-->
-
 <!--begin::Detail alat peraga-->
 <div class="card shadow" id="card-detail" style="display: none;">
     <!--begin::Card header-->
@@ -196,7 +195,6 @@
     </div>
 </div>
 <!--end::Detail alat peraga-->
-
 @section('js')
 <script src="{{ asset('/dist/plugins/bootstrap-select/js/bootstrap-select.min.js') }}"></script>
 <script src="{{ asset('/dist/plugins/custom/datatables/datatables.bundle.v817.js') }}"></script>
