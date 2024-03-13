@@ -4,6 +4,11 @@ var table;
 //Class Initialization
 jQuery(document).ready(function() {
     _loadDataAlatPeraga();
+    //Reset Filter
+    $('#btn-resetDt').click(function(e){
+        e.preventDefault();
+        $('#filterDt').selectpicker('val', '5'), table.ajax.reload( null, false );
+    });
     // selectpicker
     loadSelectpicker_satuan(), loadSelectpicker_laboratorium(), loadSelectpicker_lokasi();
     //status changer
@@ -25,10 +30,9 @@ const _loadDataAlatPeraga = () => {
             "url" : BASE_URL+ "/app_admin/ajax/load_alat_peraga",
             'headers': { 'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content') },
             'type': 'POST',
-            // "data"  : function ( data ) {
-            //     data.filterStatus  = $('#filterDtStatus').val();
-            //     data.filterKategori  = $('#filterDtKategori').val();
-            // }
+            "data"  : function ( data ) {
+                data.filter  = $('#filterDt').val();
+            }
         },
         destroy: true,
         draw: true,
@@ -118,6 +122,10 @@ const _loadDataAlatPeraga = () => {
     });
     $("#dt-alatPeraga").css("width", "100%");
 }
+//Load Change Filter Data
+$('#filterDt').on('changed.bs.select', function(e){
+    table.ajax.reload( null, false );
+});
 /*************************
     Custom Select satuan
 *************************/
@@ -451,7 +459,7 @@ $("#btn-save").on("click", function (e) {
                             icon: "success",
                             allowOutsideClick: false,
                         }).then(function (result) {
-                            _closeCard('form_alat_peraga'), _loadDataAlatPeraga();
+                            _closeCard('form_alat_peraga'), table.ajax.reload( null, false );
                         });
                     }else if (data.kode_available == true) {
                         Swal.fire({
@@ -499,9 +507,9 @@ const _updateStatus = (idp, value) => {
     if(value=='1') {
         textLbl = 'Aktifkan';
     }
-    let textSwal = textLbl+ ' Data buku sekarang ?';
+    let textSwal = textLbl+ ' alat peraga sekarang ?';
     if(value=='100') {
-        textSwal = 'Yakin ingin memindahkan buku ini ke data sampah ?';
+        textSwal = 'Yakin ingin memindahkan postingan ini ke data sampah ?';
     }
     Swal.fire({
         title: "",
@@ -517,7 +525,7 @@ const _updateStatus = (idp, value) => {
             blockUi.block(), blockUi.destroy();
             // Load Ajax
             $.ajax({
-                url: BASE_URL+ "/app_admin/ajax/data_buku_update_status",
+                url: BASE_URL+ "/app_admin/ajax/alat_peraga_update_status",
                 headers: { 'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content') },
                 type: "POST",
                 dataType: "JSON",
@@ -526,13 +534,13 @@ const _updateStatus = (idp, value) => {
                 }, success: function (data) {
                     blockUi.release(), blockUi.destroy();
                     Swal.fire({ title: "Success!", html: data.message, icon: "success", allowOutsideClick: false }).then(function (result) {
-                        _loadDataAlatPeraga();
+                        table.ajax.reload( null, false );
                     });
                 }, error: function (jqXHR, textStatus, errorThrown) {
                     blockUi.release(), blockUi.destroy();
                     Swal.fire({ title: "Ooops!", text: "Terjadi kesalahan yang tidak diketahui, Periksa koneksi jaringan internet lalu coba kembali. Mohon hubungi pengembang jika masih mengalami masalah yang sama.", icon: "error", allowOutsideClick: false }).then(function (result) {
                         console.log("Update data is error!");
-                        _loadDataAlatPeraga();
+                        table.ajax.reload( null, false );
                     });
                 }
             });
