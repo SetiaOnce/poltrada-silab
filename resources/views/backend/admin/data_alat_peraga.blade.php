@@ -134,6 +134,22 @@
     </div>
     <!--end::Card header-->
     <div class="card-body">
+        <div class="row">
+            <div class="col-md-12 d-flex justify-content-center">
+                <div class="form-group me-3">
+                    <label for="filterDt">Tampilkan: </label>
+                    <select id="filterDt" name="filterDt" class="selectpicker show-tick" data-style="btn-sm btn-secondary" title="-- Semua --">
+                        <option data-icon="mdi mdi-file-document font-size-lg bs-icon" value="5" selected>Semua</option>
+                        <option data-icon="mdi mdi-earth font-size-lg bs-icon" value="1">Aktif</option>
+                        <option data-icon="mdi mdi-file font-size-lg bs-icon" value="0">Tidak Aktif</option>
+                        <option data-icon="mdi mdi-delete-variant font-size-lg bs-icon" value="100">Sampah</option>
+                    </select>
+                </div>
+                <div class="form-group ">
+                    <button type="button" class="btn btn-sm  btn-danger waves-effect waves-light" id="btn-resetDt" name="btn-resetDt"><i class="bi bi-arrow-clockwise"></i> Reset</button>
+                </div>
+            </div>
+        </div>
         <div class="table-responsive">
             <!--begin::Table-->
             <table class="table table-rounded table-hover align-middle table-row-bordered border gy-3 gs-3" id="dt-alatPeraga">
