@@ -25,6 +25,11 @@ class DataAlatPeragaController extends Controller
     public function data(Request $request)
     {
         $query = DataAlatPeraga::orderBy('fid_lab', 'DESC');
+        if($request->input('filter') == 5){
+            $query = DataAlatPeraga::whereNot('status', 100);
+        }else{
+            $query = DataAlatPeraga::whereStatus($request->filter);
+        }
         $data = $query->get();
         return Datatables::of($data)->addIndexColumn()
             ->editColumn('laboratorium', function ($row) {
@@ -74,9 +79,24 @@ class DataAlatPeragaController extends Controller
                 </a>';
                 return $fileCustom;
             })
+            ->editColumn('status', function ($row) {
+                if($row->status == 0) {
+                    $activeCustom = '<button type="button" class="btn btn-sm btn-danger font-weight-bold mb-1" data-toggle="tooltip" title="Alat Tidak Aktif (DRAFT), Aktifkan ?" onclick="_updateStatus('."'".$row->id."'".', '."'1'".',  '."'status'".');"><i class="fas fa-toggle-off"></i></button>';
+                } else if($row->status == 1){
+                    $activeCustom = '<button type="button" class="btn btn-sm btn-info font-weight-bold mb-1" data-toggle="tooltip" title="Alat Aktif (PUBLIK), Nonaktifkan ?" onclick="_updateStatus('."'".$row->id."'".', '."'0'".',  '."'status'".');"><i class="fas fa-toggle-on"></i></button>';
+                } else {
+                    $activeCustom = '<button type="button" class="btn btn-sm btn-warning font-weight-bold mb-1" data-toggle="tooltip" title="Data sampah!" disabled><i class="mdi mdi-delete-variant"></i></button>';
+                }
+                return $activeCustom;
+            })
             ->addColumn('action', function($row){
                 $btn = '<button type="button" class="btn btn-icon btn-sm btn-dark mb-1 ms-1" data-bs-toggle="tooltip" title="Edit data!" onclick="_editData('."'".$row->id."'".');"><i class="la la-edit fs-3"></i></button>';
                 $btn = $btn.'<a href="javascript:void(0);"class="btn btn-icon btn-sm btn-info mb-1 ms-1" data-bs-toggle="tooltip" title="Cetak barcode!" onclick="_cetakBarcode('."'".$row->id."'".');"><i class="bi bi-upc-scan"></i></a>';
+                if($row->status == 100){
+                    $btn =  $btn.'<button type="button" class="d-flex align-items-center btn btn-block btn-sm btn-info font-weight-bold mb-1"  data-bs-toggle="tooltip" title="Kembalikan data alat!" onclick="_updateStatus('."'".$row->id."'".', '."'1'".',  '."'restore'".');"><i class="mdi mdi-restore"></i> Restore</button>';
+                }else{
+                    $btn = $btn.'<button type="button" class="btn btn-icon btn-sm btn-warning font-weight-bold mb-1"  data-bs-toggle="tooltip" title="Buang data alat ke tempat sampah!" onclick="_updateStatus('."'".$row->id."'".', '."'100'".',  '."'sampah'".');"><i class="mdi mdi-delete-outline"></i></button>';
+                }
                 return $btn;
             })
             ->rawColumns(['laboratorium','nama_alat_peraga', 'foto', 'satuan', 'perawatan', 'pemeriksaan', 'status', 'action'])
@@ -258,28 +278,28 @@ class DataAlatPeragaController extends Controller
             'row' =>$getRow,
         ]);
     }
-    // public function updateStatus(Request $request)
-    // {
-    //     date_default_timezone_set("Asia/Makassar");
+    public function updateStatus(Request $request)
+    {
+        date_default_timezone_set("Asia/Makassar");
 
-    //     $data_id = $request->input('idp');
-    //     $value = $request->input('value');
-    //     $message = 'Buku berhasil dinonaktifkan';
-    //     if($value == 1){
-    //         $message = 'Buku berhasil diaktfikan';
-    //     }else if($value == 100){
-    //         $message = 'Buku telah dipindahkan ke tempat sampah';
-    //     }
-    //     DataBuku::where('id', $data_id)->update([
-    //         'status' => $value,
-    //         'updated_at' => Carbon::now()
-    //     ]);
+        $data_id = $request->input('idp');
+        $value = $request->input('value');
+        $message = 'Data alat dinonaktifkan';
+        if($value == 1){
+            $message = 'Data alat diaktfikan';
+        }else if($value == 100){
+            $message = 'Alat telah dipindahkan ke tempat sampah';
+        }
+        DataAlatPeraga::where('id', $data_id)->update([
+            'status' => $value,
+            'updated_at' => Carbon::now()
+        ]);
 
-    //     return response()->json([
-    //         'status' => TRUE,
-    //         'message' => $message
-    //     ]);
-    // }
+        return response()->json([
+            'status' => TRUE,
+            'message' => $message
+        ]);
+    }
 
     public function barcode($idp, $ukuran)
     {
