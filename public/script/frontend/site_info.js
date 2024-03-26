@@ -17,7 +17,8 @@ const loadSytem = function() {
                     <img alt="Logo" src="` +data.public_header+ `" class="h-40px app-sidebar-logo-default" />
                 `;
                 $('#kt_header_public_logo a').html(headerLogo);
-                $('#footerCopyright').html(data.copyright);
+                $('#footer .copyright').html(data.copyright);
+                $('#footer .visitors').html(`<button class="btn btn-secondary btn-sm">Visitors : `+data.visitors+`</button>`);
             }, error: function (jqXHR, textStatus, errorThrown) {
                 console.log('Load data is error');
             }
