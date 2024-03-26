@@ -2,6 +2,7 @@
 namespace App\Helpers;
 
 use App\Models\LogActivities;
+use App\Models\Visitors;
 use Carbon\Carbon;
 use Carbon\CarbonInterval;
 use DateTime, DateInterval, DatePeriod;
@@ -269,5 +270,43 @@ class Shortcut {
 		$filename = md5(Shortcut::random_strings(20)) . '.' . $fileExtension;
 		Image::make($photoContents)->save(public_path('dist/img/anggota/'.$filename));
 		return $filename;
+	}
+	public static function logVisitor()
+	{
+		// Ambil alamat IP pengunjung
+		$ipaddress = '';
+        if (isset($_SERVER['HTTP_CLIENT_IP']))
+            $ipaddress = $_SERVER['HTTP_CLIENT_IP'];
+        else if(isset($_SERVER['HTTP_X_FORWARDED_FOR']))
+            $ipaddress = $_SERVER['HTTP_X_FORWARDED_FOR'];
+        else if(isset($_SERVER['HTTP_X_FORWARDED']))
+            $ipaddress = $_SERVER['HTTP_X_FORWARDED'];
+        else if(isset($_SERVER['HTTP_FORWARDED_FOR']))
+            $ipaddress = $_SERVER['HTTP_FORWARDED_FOR'];
+        else if(isset($_SERVER['HTTP_FORWARDED']))
+            $ipaddress = $_SERVER['HTTP_FORWARDED'];
+        else if(isset($_SERVER['REMOTE_ADDR']))
+            $ipaddress = $_SERVER['REMOTE_ADDR'];
+        else
+            $ipaddress = null;  
+
+		// Periksa apakah alamat IP sudah ada dalam rentang waktu yang ditentukan
+		$oneHourAgo = now()->subHour();
+		$existingVisitor = Visitors::where('ip_address', $ipaddress)
+								  ->where('timestamp', '>', $oneHourAgo)
+								  ->first();
+		if (!$existingVisitor) {
+			// Jika belum ada, simpan pengunjung baru ke database
+			Visitors::create([
+				'ip_address' => $ipaddress,
+				'timestamp' => now(),
+				'agent' => Request::header('user-agent'),
+			]);
+		}
+		// Hitung jumlah pengunjung unik dalam rentang waktu tertentu
+		$uniqueVisitorsCount = Visitors::where('timestamp', '>', $oneHourAgo)
+									  ->distinct('ip_address')
+									  ->count('ip_address');
+		return $uniqueVisitorsCount;
 	}
 }
