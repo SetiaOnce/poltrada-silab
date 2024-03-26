@@ -20,6 +20,7 @@ use App\Models\Peminjaman;
 use App\Models\PerawatanAlat;
 use App\Models\ProfileApp;
 use App\Models\ProfileLaboratorium;
+use App\Models\Visitors;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -34,22 +35,27 @@ class FrontendController extends Controller
         $data['dt_banners'] = Banners::orderBy('id', 'DESC')->where('status', 1)->get(); 
         $data['dt_linkTerkait'] = LinkTerkait::orderBy('id', 'DESC')->where('status', 1)->get(); 
         $data['dt_laboratorium'] = NamaLaboratorium::orderBy('id', 'DESC')->where('status', 1)->get(); 
+        Shortcut::logVisitor();
         return view('frontend.index', $data);
     }
     public function profile()
     {
+        Shortcut::logVisitor();
         return view('frontend.profile');
     }
     public function faq()
     {
+        Shortcut::logVisitor();
         return view('frontend.faq');
     }
     public function bukuTamu()
     {
+        Shortcut::logVisitor();
         return view('frontend.buku_tamu');
     }
     public function peminjaman()
     {
+        Shortcut::logVisitor();
         return view('frontend.peminjaman');
     }
     public function view($kode)
@@ -58,6 +64,7 @@ class FrontendController extends Controller
         if(!empty($data['alat'])){
             $data['dtPerawatan'] = PerawatanAlat::whereFidAlatPeraga($data['alat']['id'])->get();
             $data['dtPemeriksaan'] = PemeriksaanAlat::whereFidAlatPeraga($data['alat']['id'])->get();
+            Shortcut::logVisitor();
             return view('frontend.detail_alat_peraga', $data);
         }else{
             abort(404);
@@ -68,10 +75,12 @@ class FrontendController extends Controller
     public function loadProfileApp()
     {
         $profile_app = ProfileApp::where('id', 1)->first();
+        $visitors = Visitors::all()->count();
         $response = array(
             'status' => TRUE,
             'copyright' => $profile_app->copyright,
             'public_header' => asset('dist/img/logo/'.$profile_app->logo_header_public),
+            'visitors' => $visitors,
         );
         return response()->json($response);
     }
